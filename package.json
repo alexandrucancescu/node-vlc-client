@@ -1,10 +1,25 @@
 {
   "name": "vlc-client",
-  "version": "1.0.0",
-  "private": true,
-  "main": "dist/Run.js",
+  "description": "Node client/remote implementation to control VLC with simple function calls using VLC's own HTTP interface",
+  "version": "0.0.1",
+  "private": false,
+  "main": "dist/index.js",
   "scripts": {},
   "author": "Alexandru Cancescu",
+  "license": "MIT",
+  "homepage": "https://github.com/alexandrucancescu/node-vlc-client",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alexandrucancescu/node-vlc-client"
+  },
+  "files": [
+    "dist/*"
+  ],
+  "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
+  "keywords": [
+    "node","vlc","client","vlc-client","vlc-http","vlc-lue","vlc-client"
+  ],
   "devDependencies": {
     "@types/express": "^4.17.7",
     "@types/node": "^14.0.27"
