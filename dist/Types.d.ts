@@ -22,6 +22,21 @@ export interface VlcStatus {
     repeat: boolean;
     subtitledelay: number;
     equalizer: any[];
+    information: {
+        chapter: number;
+        chapters: number[];
+        title?: any;
+        category: {
+            meta: {
+                showName?: string;
+                seasonNumber?: string;
+                episodeNumber?: string;
+                filename: string;
+                [key: string]: string;
+            };
+        };
+        titles: any[];
+    };
 }
 export interface PlaylistEntry {
     name: string;
@@ -39,4 +54,29 @@ export declare enum AspectRatio {
     _221_100 = "221:100",
     _235_100 = "235:100",
     _239_100 = "239:100"
+}
+export interface Tracks {
+    video?: VideoTrack[];
+    audio?: AudioTrack[];
+    subtitle?: SubtitleTrack[];
+}
+export interface Track {
+    streamIndex: number;
+    Type: "Audio" | "Video" | "Subtitle";
+    Language?: string;
+    Codec?: string;
+}
+export interface VideoTrack extends Track {
+    Frame_rate: string;
+    Decoded_format: string;
+    Video_resolution: string;
+    Buffer_dimensions: string;
+    Orientation: string;
+}
+export interface AudioTrack extends Track {
+    Channels: string;
+    Bits_per_sample: string;
+    Sample_rate: string;
+}
+export interface SubtitleTrack extends Track {
 }

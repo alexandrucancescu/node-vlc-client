@@ -1,4 +1,4 @@
-import { AspectRatio, ClientOptions, PlaylistEntry, VlcStatus } from "./Types";
+import { AspectRatio, ClientOptions, PlaylistEntry, AudioTrack, VideoTrack, SubtitleTrack, Tracks, VlcStatus } from "./Types";
 export default class Client {
     private readonly options;
     constructor(options: ClientOptions);
@@ -69,6 +69,13 @@ export default class Client {
      */
     getPlaylist(): Promise<PlaylistEntry[]>;
     getAspectRatio(): Promise<string>;
+    getSubtitleTracks(): Promise<SubtitleTrack[]>;
+    getAudioTracks(): Promise<AudioTrack[]>;
+    getVideoTracks(): Promise<VideoTrack[]>;
+    /**
+     * Get all tracks (video,audio,subs)
+     */
+    getTracks(): Promise<Tracks>;
     /**
      * Returns an array with all the available aspect ratios
      */

@@ -1,4 +1,4 @@
-import {AspectRatio, ClientOptions, PlaylistEntry, VlcStatus} from "./Types";
+import {AspectRatio, ClientOptions, PlaylistEntry, Track, AudioTrack, VideoTrack, SubtitleTrack, Tracks, VlcStatus} from "./Types";
 import * as phin from "phin"
 import {stringify as encodeQuery, unescape} from "querystring"
 
@@ -172,6 +172,46 @@ export default class Client{
 		return (await this.status()).aspectratio;
 	}
 
+	public async getSubtitleTracks():Promise<SubtitleTrack[]>{
+		return (await this.getTracks()).subtitle;
+	}
+
+	public async getAudioTracks():Promise<AudioTrack[]>{
+		return (await this.getTracks()).audio;
+	}
+
+	public async getVideoTracks():Promise<VideoTrack[]>{
+		return (await this.getTracks()).video;
+	}
+
+	/**
+	 * Get all tracks (video,audio,subs)
+	 */
+	public async getTracks():Promise<Tracks>{
+		const stats = await this.status();
+
+		let tracks: Tracks = {
+			audio:[],
+			video:[],
+			subtitle:[],
+		}
+		for(let key of Object.keys(stats.information.category)){
+			if(key.substring(0,6)==="Stream"){
+				let streamIndex = Number.parseInt(key.substring(7));
+				if(!isNaN(streamIndex)){
+					let track:Track = stats.information.category[key];
+					track.streamIndex = streamIndex;
+					switch (track.Type) {
+						case "Audio": tracks.audio.push(<AudioTrack>track);break;
+						case "Video": tracks.video.push(<VideoTrack>track);break;
+						case "Subtitle": tracks.subtitle.push(<SubtitleTrack>track);break;
+					}
+				}
+			}
+		}
+
+		return tracks;
+	}
 	/**
 	 * Returns an array with all the available aspect ratios
 	 */

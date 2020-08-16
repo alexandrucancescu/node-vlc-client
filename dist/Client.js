@@ -206,6 +206,55 @@ class Client {
             return (yield this.status()).aspectratio;
         });
     }
+    getSubtitleTracks() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getTracks()).subtitle;
+        });
+    }
+    getAudioTracks() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getTracks()).audio;
+        });
+    }
+    getVideoTracks() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getTracks()).video;
+        });
+    }
+    /**
+     * Get all tracks (video,audio,subs)
+     */
+    getTracks() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const stats = yield this.status();
+            let tracks = {
+                audio: [],
+                video: [],
+                subtitle: [],
+            };
+            for (let key of Object.keys(stats.information.category)) {
+                if (key.substring(0, 6) === "Stream") {
+                    let streamIndex = Number.parseInt(key.substring(7));
+                    if (!isNaN(streamIndex)) {
+                        let track = stats.information.category[key];
+                        track.streamIndex = streamIndex;
+                        switch (track.Type) {
+                            case "Audio":
+                                tracks.audio.push(track);
+                                break;
+                            case "Video":
+                                tracks.video.push(track);
+                                break;
+                            case "Subtitle":
+                                tracks.subtitle.push(track);
+                                break;
+                        }
+                    }
+                }
+            }
+            return tracks;
+        });
+    }
     /**
      * Returns an array with all the available aspect ratios
      */
