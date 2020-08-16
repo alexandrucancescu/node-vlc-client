@@ -1,27 +1,21 @@
-import {ClientOptions, VlcStatus} from "./Types";
-import * as xml from "fast-xml-parser"
+import {AspectRatio, ClientOptions, PlaylistEntry, VlcStatus} from "./Types";
 import * as phin from "phin"
-import {stringify as encode} from "querystring"
+import {stringify as encodeQuery, unescape} from "querystring"
 
 export default class Client{
 	private readonly options: ClientOptions;
-	// private readonly xml: XmlParser.
 
 	public constructor(options:ClientOptions) {
-		this.options = validateOptions(options);
+		this.options = Client.validateOptions(options);
 	}
 
 	//region ACTIONS
 	public async play(){
-		if(!await this.isPlaying()){
-			await this.togglePlay();
-		}
+		await this.sendCommand("pl_forceresume");
 	}
 
 	public async pause(){
-		if(await this.isPlaying()){
-			await this.togglePlay();
-		}
+		await this.sendCommand("pl_forcepause");
 	}
 
 	public async togglePlay(){
@@ -48,26 +42,80 @@ export default class Client{
 		await this.sendCommand("pl_delete",{id});
 	}
 
+	public async jumpForward(seconds: number){
+		await this.sendCommand("seek",{
+			val: `+${seconds}`
+		});
+	}
+
+	public async jumpBackwards(seconds: number){
+		await this.sendCommand("seek",{
+			val: `-${seconds}`
+		});
+	}
+
+	public async toggleFullscreen(){
+		await this.sendCommand("fullscreen");
+	}
+
+	/**
+	 * Increase the volume 0-100
+	 * @param increaseBy: int
+	 */
+	public async increaseVolume(increaseBy: number){
+		await this.sendCommand("seek",{
+			val: `+${Math.floor(increaseBy*5.12)}`
+		});
+	}
+
+	/**
+	 * Decrease the volume 0-100
+	 * @param decreaseBy: int
+	 */
+	public async decreaseVolume(decreaseBy: number){
+		await this.sendCommand("seek",{
+			val: `-${Math.floor(decreaseBy*5.12)}`
+		});
+	}
+
 	//endregion
 
 	//region GETTERS
-	public async stats():Promise<VlcStatus>{
+	/**
+	 * Returns an object with all the info that VLC provides except playlist info
+	 */
+	public async status():Promise<VlcStatus>{
 		return this.makeRequest();
 	}
 
 	public async isPlaying():Promise<boolean>{
-		return (await this.getState()) === "playing";
+		return (await this.getPlaybackState()) === "playing";
+	}
+
+	public async isPaused():Promise<boolean>{
+		return (await this.getPlaybackState()) === "paused";
+	}
+
+	public async isStopped():Promise<boolean>{
+		return (await this.getPlaybackState()) === "stopped";
+	}
+
+	public async isFullscreen():Promise<boolean>{
+		return (await this.status()).fullscreen;
 	}
 
 	/**
 	 * State of vlc ( playing / paused / stop );
 	 */
-	public async getState():Promise<string>{
-		return (await this.stats()).state;
+	public async getPlaybackState():Promise<string>{
+		return (await this.status()).state;
 	}
 
+	/**
+	 * Time of playback in seconds
+	 */
 	public async getTime():Promise<number>{
-		return (await this.stats()).time;
+		return (await this.status()).time;
 	}
 
 	/**
@@ -77,15 +125,18 @@ export default class Client{
 		return ((await this.getTime()) / (await this.getLength())) * 100;
 	}
 
+	/**
+	 * Length of the current media playing in seconds
+	 */
 	public async getLength():Promise<number>{
-		return (await this.stats()).length;
+		return (await this.status()).length;
 	}
 
 	/**
 	 * Get the volume in a 0-100 range
 	 */
 	public async getVolume():Promise<number>{
-		return ((await this.stats()).volume/512)*100;
+		return ((await this.status()).volume/512)*100;
 	}
 
 	/**
@@ -93,32 +144,111 @@ export default class Client{
 	 * from 0-512, where 256 is 100% and 512 is 200%
 	 */
 	public async getVolumeRaw():Promise<number>{
-		return (await this.stats()).volume;
+		return (await this.status()).volume;
 	}
 
+	/**
+	 * Audio delay from video stream in seconds
+	 */
 	public async getAudioDelay():Promise<number>{
-		return (await this.stats()).audiodelay;
+		return (await this.status()).audiodelay;
 	}
 
+	/**
+	 * Subtitle delay from video stream in seconds
+	 */
 	public async getSubtitleDelay():Promise<number>{
-		return (await this.stats()).subtitledelay;
+		return (await this.status()).subtitledelay;
+	}
+
+	/**
+	 * Returns an array of PlaylistEntries
+	 */
+	public async getPlaylist():Promise<PlaylistEntry[]>{
+		return this.requestPlaylist();
+	}
+
+	public async getAspectRatio():Promise<string> {
+		return (await this.status()).aspectratio;
+	}
+
+	/**
+	 * Returns an array with all the available aspect ratios
+	 */
+	public availableAspectRations():string[]{
+		return Object.values(AspectRatio);
 	}
 
 	//endregion
 
 	//region SETTERS
-	public async setTime(){
 
+	/**
+	 * Set time of playback in seconds
+	 */
+	public async setTime(time: number){
+		await this.sendCommand("seek", {
+			val: Math.floor(time),
+		});
+	}
+
+	/**
+	 * Set progress of media playback 0-100 range
+	 * @param progress: float
+	 */
+	public async setProgress(progress: number){
+		if(progress < 0 || progress > 100) return;
+
+		await this.sendCommand("seek",{
+			val: `${progress}%`,
+		})
+	}
+
+	/**
+	 * Set volume from 0-100
+	 * @param volume:Int
+	 */
+	public async setVolume(volume: number){
+		await this.sendCommand("volume",{
+			val: Math.floor(512*volume/100)
+		})
+	}
+
+	/**
+	 * Set volume as VLC represents it 0-512
+	 * @param volume:Int
+	 */
+	public async setVolumeRaw(volume: number){
+		await this.sendCommand("volume",{
+			val: Math.floor(volume),
+		})
+	}
+
+	public async setFullscreen(val: boolean){
+		if((await this.isFullscreen()) != val){
+			await this.toggleFullscreen();
+		}
+	}
+
+	public async setAspectRation(ar: AspectRatio){
+		if(!Object.values(AspectRatio).includes(ar)){
+			return;
+		}
+		await this.sendCommand("aspectratio",{
+			val: ar
+		});
 	}
 
 	//endregion
 
+	//region REQUESTS
 	private async sendCommand(command: string,params?: any){
 		return this.makeRequest({
 			command,
 			...params
 		})
 	}
+
 	private async makeRequest(data?: any):Promise<VlcStatus>{
 		const auth = `${this.options.username}:${this.options.password}`;
 
@@ -133,7 +263,7 @@ export default class Client{
 		let url = `http://${this.options.ip}:${this.options.port}/requests/status.json`;
 
 		if(data){
-			url += `?${encode(data)}`;
+			url += `?${encodeQuery(data)}`;
 		}
 
 		console.log(url);
@@ -155,23 +285,69 @@ export default class Client{
 			throw new Error(`Request error | Code ${response.statusCode} | Message ${response.statusMessage}`);
 		}
 	}
-}
 
-function validateOptions(options: ClientOptions): ClientOptions{
-	if(typeof options.ip !== "string"){
-		throw new Error("IP is required and should be a string");
+	private async requestPlaylist():Promise<PlaylistEntry[]>{
+		const auth = `${this.options.username}:${this.options.password}`;
+
+		const headers = {
+			"Authorization": `Basic ${Buffer.from(auth).toString("base64")}`,
+		}
+
+		let url = `http://${this.options.ip}:${this.options.port}/requests/playlist.json`;
+
+		console.log(url);
+
+		const response = await phin({
+			url,
+			method: "GET",
+			headers,
+		});
+
+		console.log(response.url,response.statusMessage,response.statusCode);
+
+		if(response.complete && response.statusCode === 200){
+			return Client.parsePlaylistEntries(response.body as unknown as Buffer);
+		}else{
+			throw new Error(`Request error | Code ${response.statusCode} | Message ${response.statusMessage}`);
+		}
 	}
-	if(typeof options.port !== "number"){
-		throw new Error("Port is required and should be a number");
-	}
-	if(options.username!==undefined && options.username !==null && (typeof options.username !== "string")){
-		throw new Error("Username should be a string");
-	}else{
-		options.username = "";
-	}
-	if(typeof options.password !== "string"){
-		throw new Error("Password is required and should be a string");
+	//endregion
+
+	//region HELPERS
+
+	private static parsePlaylistEntries(buffer: Buffer):PlaylistEntry[]{
+		const playlistResponse = JSON.parse(buffer.toString());
+
+		return playlistResponse.children
+			.find(c=>c.name === "Playlist")
+			.children
+			.map(pe => ({
+					id: pe.id,
+					name: pe.name,
+					duration: pe.duration,
+					isCurrent: (pe.current === "current"),
+					uri: unescape(pe.uri),
+			}));
 	}
 
-	return options;
+	private static validateOptions(options: ClientOptions): ClientOptions{
+		if(typeof options.ip !== "string"){
+			throw new Error("IP is required and should be a string");
+		}
+		if(typeof options.port !== "number"){
+			throw new Error("Port is required and should be a number");
+		}
+		if(options.username!==undefined && options.username !==null && (typeof options.username !== "string")){
+			throw new Error("Username should be a string");
+		}else{
+			options.username = "";
+		}
+		if(typeof options.password !== "string"){
+			throw new Error("Password is required and should be a string");
+		}
+
+		return options;
+	}
+
+	//endregion
 }

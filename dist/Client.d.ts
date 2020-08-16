@@ -1,4 +1,4 @@
-import { ClientOptions, VlcStatus } from "./Types";
+import { AspectRatio, ClientOptions, PlaylistEntry, VlcStatus } from "./Types";
 export default class Client {
     private readonly options;
     constructor(options: ClientOptions);
@@ -10,17 +10,42 @@ export default class Client {
     previous(): Promise<void>;
     emptyPlaylist(): Promise<void>;
     removeFromPlaylist(id: number): Promise<void>;
-    stats(): Promise<VlcStatus>;
+    jumpForward(seconds: number): Promise<void>;
+    jumpBackwards(seconds: number): Promise<void>;
+    toggleFullscreen(): Promise<void>;
+    /**
+     * Increase the volume 0-100
+     * @param increaseBy: int
+     */
+    increaseVolume(increaseBy: number): Promise<void>;
+    /**
+     * Decrease the volume 0-100
+     * @param decreaseBy: int
+     */
+    decreaseVolume(decreaseBy: number): Promise<void>;
+    /**
+     * Returns an object with all the info that VLC provides except playlist info
+     */
+    status(): Promise<VlcStatus>;
     isPlaying(): Promise<boolean>;
+    isPaused(): Promise<boolean>;
+    isStopped(): Promise<boolean>;
+    isFullscreen(): Promise<boolean>;
     /**
      * State of vlc ( playing / paused / stop );
      */
-    getState(): Promise<string>;
+    getPlaybackState(): Promise<string>;
+    /**
+     * Time of playback in seconds
+     */
     getTime(): Promise<number>;
     /**
      * Media progress from 0-100
      */
     getProgress(): Promise<number>;
+    /**
+     * Length of the current media playing in seconds
+     */
     getLength(): Promise<number>;
     /**
      * Get the volume in a 0-100 range
@@ -31,9 +56,47 @@ export default class Client {
      * from 0-512, where 256 is 100% and 512 is 200%
      */
     getVolumeRaw(): Promise<number>;
+    /**
+     * Audio delay from video stream in seconds
+     */
     getAudioDelay(): Promise<number>;
+    /**
+     * Subtitle delay from video stream in seconds
+     */
     getSubtitleDelay(): Promise<number>;
-    setTime(): Promise<void>;
+    /**
+     * Returns an array of PlaylistEntries
+     */
+    getPlaylist(): Promise<PlaylistEntry[]>;
+    getAspectRatio(): Promise<string>;
+    /**
+     * Returns an array with all the available aspect ratios
+     */
+    availableAspectRations(): string[];
+    /**
+     * Set time of playback in seconds
+     */
+    setTime(time: number): Promise<void>;
+    /**
+     * Set progress of media playback 0-100 range
+     * @param progress: float
+     */
+    setProgress(progress: number): Promise<void>;
+    /**
+     * Set volume from 0-100
+     * @param volume:Int
+     */
+    setVolume(volume: number): Promise<void>;
+    /**
+     * Set volume as VLC represents it 0-512
+     * @param volume:Int
+     */
+    setVolumeRaw(volume: number): Promise<void>;
+    setFullscreen(val: boolean): Promise<void>;
+    setAspectRation(ar: AspectRatio): Promise<void>;
     private sendCommand;
     private makeRequest;
+    private requestPlaylist;
+    private static parsePlaylistEntries;
+    private static validateOptions;
 }

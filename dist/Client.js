@@ -9,26 +9,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const Types_1 = require("./Types");
 const phin = require("phin");
 const querystring_1 = require("querystring");
 class Client {
-    // private readonly xml: XmlParser.
     constructor(options) {
-        this.options = validateOptions(options);
+        this.options = Client.validateOptions(options);
     }
     //region ACTIONS
     play() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!(yield this.isPlaying())) {
-                yield this.togglePlay();
-            }
+            yield this.sendCommand("pl_forceresume");
         });
     }
     pause() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (yield this.isPlaying()) {
-                yield this.togglePlay();
-            }
+            yield this.sendCommand("pl_forcepause");
         });
     }
     togglePlay() {
@@ -61,29 +57,91 @@ class Client {
             yield this.sendCommand("pl_delete", { id });
         });
     }
+    jumpForward(seconds) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("seek", {
+                val: `+${seconds}`
+            });
+        });
+    }
+    jumpBackwards(seconds) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("seek", {
+                val: `-${seconds}`
+            });
+        });
+    }
+    toggleFullscreen() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("fullscreen");
+        });
+    }
+    /**
+     * Increase the volume 0-100
+     * @param increaseBy: int
+     */
+    increaseVolume(increaseBy) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("seek", {
+                val: `+${Math.floor(increaseBy * 5.12)}`
+            });
+        });
+    }
+    /**
+     * Decrease the volume 0-100
+     * @param decreaseBy: int
+     */
+    decreaseVolume(decreaseBy) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("seek", {
+                val: `-${Math.floor(decreaseBy * 5.12)}`
+            });
+        });
+    }
     //endregion
     //region GETTERS
-    stats() {
+    /**
+     * Returns an object with all the info that VLC provides except playlist info
+     */
+    status() {
         return __awaiter(this, void 0, void 0, function* () {
             return this.makeRequest();
         });
     }
     isPlaying() {
         return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getState()) === "playing";
+            return (yield this.getPlaybackState()) === "playing";
+        });
+    }
+    isPaused() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getPlaybackState()) === "paused";
+        });
+    }
+    isStopped() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getPlaybackState()) === "stopped";
+        });
+    }
+    isFullscreen() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.status()).fullscreen;
         });
     }
     /**
      * State of vlc ( playing / paused / stop );
      */
-    getState() {
+    getPlaybackState() {
         return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.stats()).state;
+            return (yield this.status()).state;
         });
     }
+    /**
+     * Time of playback in seconds
+     */
     getTime() {
         return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.stats()).time;
+            return (yield this.status()).time;
         });
     }
     /**
@@ -94,9 +152,12 @@ class Client {
             return ((yield this.getTime()) / (yield this.getLength())) * 100;
         });
     }
+    /**
+     * Length of the current media playing in seconds
+     */
     getLength() {
         return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.stats()).length;
+            return (yield this.status()).length;
         });
     }
     /**
@@ -104,7 +165,7 @@ class Client {
      */
     getVolume() {
         return __awaiter(this, void 0, void 0, function* () {
-            return ((yield this.stats()).volume / 512) * 100;
+            return ((yield this.status()).volume / 512) * 100;
         });
     }
     /**
@@ -113,26 +174,110 @@ class Client {
      */
     getVolumeRaw() {
         return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.stats()).volume;
+            return (yield this.status()).volume;
         });
     }
+    /**
+     * Audio delay from video stream in seconds
+     */
     getAudioDelay() {
         return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.stats()).audiodelay;
+            return (yield this.status()).audiodelay;
         });
     }
+    /**
+     * Subtitle delay from video stream in seconds
+     */
     getSubtitleDelay() {
         return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.stats()).subtitledelay;
+            return (yield this.status()).subtitledelay;
         });
+    }
+    /**
+     * Returns an array of PlaylistEntries
+     */
+    getPlaylist() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.requestPlaylist();
+        });
+    }
+    getAspectRatio() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.status()).aspectratio;
+        });
+    }
+    /**
+     * Returns an array with all the available aspect ratios
+     */
+    availableAspectRations() {
+        return Object.values(Types_1.AspectRatio);
     }
     //endregion
     //region SETTERS
-    setTime() {
+    /**
+     * Set time of playback in seconds
+     */
+    setTime(time) {
         return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("seek", {
+                val: Math.floor(time),
+            });
+        });
+    }
+    /**
+     * Set progress of media playback 0-100 range
+     * @param progress: float
+     */
+    setProgress(progress) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (progress < 0 || progress > 100)
+                return;
+            yield this.sendCommand("seek", {
+                val: `${progress}%`,
+            });
+        });
+    }
+    /**
+     * Set volume from 0-100
+     * @param volume:Int
+     */
+    setVolume(volume) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("volume", {
+                val: Math.floor(512 * volume / 100)
+            });
+        });
+    }
+    /**
+     * Set volume as VLC represents it 0-512
+     * @param volume:Int
+     */
+    setVolumeRaw(volume) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("volume", {
+                val: Math.floor(volume),
+            });
+        });
+    }
+    setFullscreen(val) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if ((yield this.isFullscreen()) != val) {
+                yield this.toggleFullscreen();
+            }
+        });
+    }
+    setAspectRation(ar) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!Object.values(Types_1.AspectRatio).includes(ar)) {
+                return;
+            }
+            yield this.sendCommand("aspectratio", {
+                val: ar
+            });
         });
     }
     //endregion
+    //region REQUESTS
     sendCommand(command, params) {
         return __awaiter(this, void 0, void 0, function* () {
             return this.makeRequest(Object.assign({ command }, params));
@@ -169,24 +314,61 @@ class Client {
             }
         });
     }
+    requestPlaylist() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const auth = `${this.options.username}:${this.options.password}`;
+            const headers = {
+                "Authorization": `Basic ${Buffer.from(auth).toString("base64")}`,
+            };
+            let url = `http://${this.options.ip}:${this.options.port}/requests/playlist.json`;
+            console.log(url);
+            const response = yield phin({
+                url,
+                method: "GET",
+                headers,
+            });
+            console.log(response.url, response.statusMessage, response.statusCode);
+            if (response.complete && response.statusCode === 200) {
+                return Client.parsePlaylistEntries(response.body);
+            }
+            else {
+                throw new Error(`Request error | Code ${response.statusCode} | Message ${response.statusMessage}`);
+            }
+        });
+    }
+    //endregion
+    //region HELPERS
+    static parsePlaylistEntries(buffer) {
+        const playlistResponse = JSON.parse(buffer.toString());
+        return playlistResponse.children
+            .find(c => c.name === "Playlist")
+            .children
+            .map(pe => ({
+            id: pe.id,
+            name: pe.name,
+            duration: pe.duration,
+            isCurrent: (pe.current === "current"),
+            uri: querystring_1.unescape(pe.uri),
+        }));
+    }
+    static validateOptions(options) {
+        if (typeof options.ip !== "string") {
+            throw new Error("IP is required and should be a string");
+        }
+        if (typeof options.port !== "number") {
+            throw new Error("Port is required and should be a number");
+        }
+        if (options.username !== undefined && options.username !== null && (typeof options.username !== "string")) {
+            throw new Error("Username should be a string");
+        }
+        else {
+            options.username = "";
+        }
+        if (typeof options.password !== "string") {
+            throw new Error("Password is required and should be a string");
+        }
+        return options;
+    }
 }
 exports.default = Client;
-function validateOptions(options) {
-    if (typeof options.ip !== "string") {
-        throw new Error("IP is required and should be a string");
-    }
-    if (typeof options.port !== "number") {
-        throw new Error("Port is required and should be a number");
-    }
-    if (options.username !== undefined && options.username !== null && (typeof options.username !== "string")) {
-        throw new Error("Username should be a string");
-    }
-    else {
-        options.username = "";
-    }
-    if (typeof options.password !== "string") {
-        throw new Error("Password is required and should be a string");
-    }
-    return options;
-}
 //# sourceMappingURL=Client.js.map

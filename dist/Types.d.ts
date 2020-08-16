@@ -28,5 +28,15 @@ export interface PlaylistEntry {
     id: number;
     duration: number;
     uri: string;
-    isPlaying: boolean;
+    isCurrent: boolean;
+}
+export declare enum AspectRatio {
+    _1_1 = "1:1",
+    _4_3 = "4:3",
+    _5_4 = "5:4",
+    _16_9 = "16:9",
+    _16_10 = "16:10",
+    _221_100 = "221:100",
+    _235_100 = "235:100",
+    _239_100 = "239:100"
 }
