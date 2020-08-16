@@ -1,6 +1,7 @@
 node_modules
 src/Test.ts
 dist/Test.*
+.idea
 
 ### GENERATED ###
 
