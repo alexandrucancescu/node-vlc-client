@@ -20,6 +20,7 @@ npm install --save vlc-client
 - [x] Get and set time, length, volume
 - [x] Playlist manipulation (add, remove, next, prev)
 - [x] Get and set audio, subtitle delay
+- [x] Add/Change video, audio, subs streams
 - [ ] Auto polling for changes
 - [ ] Audio eq, effects
 - [ ] VLC instances discovery on the network
