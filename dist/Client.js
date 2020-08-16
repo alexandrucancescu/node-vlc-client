@@ -36,6 +36,31 @@ class Client {
             yield this.sendCommand("pl_pause");
         });
     }
+    stop() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("pl_stop");
+        });
+    }
+    next() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("pl_next");
+        });
+    }
+    previous() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("pl_previous");
+        });
+    }
+    emptyPlaylist() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("pl_empty");
+        });
+    }
+    removeFromPlaylist(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("pl_delete", { id });
+        });
+    }
     //endregion
     //region GETTERS
     stats() {
@@ -45,12 +70,28 @@ class Client {
     }
     isPlaying() {
         return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.stats()).state === "playing";
+            return (yield this.getState()) === "playing";
+        });
+    }
+    /**
+     * State of vlc ( playing / paused / stop );
+     */
+    getState() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.stats()).state;
         });
     }
     getTime() {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.stats()).time;
+        });
+    }
+    /**
+     * Media progress from 0-100
+     */
+    getProgress() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return ((yield this.getTime()) / (yield this.getLength())) * 100;
         });
     }
     getLength() {

@@ -5,9 +5,22 @@ export default class Client {
     play(): Promise<void>;
     pause(): Promise<void>;
     togglePlay(): Promise<void>;
+    stop(): Promise<void>;
+    next(): Promise<void>;
+    previous(): Promise<void>;
+    emptyPlaylist(): Promise<void>;
+    removeFromPlaylist(id: number): Promise<void>;
     stats(): Promise<VlcStatus>;
     isPlaying(): Promise<boolean>;
+    /**
+     * State of vlc ( playing / paused / stop );
+     */
+    getState(): Promise<string>;
     getTime(): Promise<number>;
+    /**
+     * Media progress from 0-100
+     */
+    getProgress(): Promise<number>;
     getLength(): Promise<number>;
     /**
      * Get the volume in a 0-100 range

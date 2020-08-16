@@ -23,3 +23,10 @@ export interface VlcStatus {
     subtitledelay: number;
     equalizer: any[];
 }
+export interface PlaylistEntry {
+    name: string;
+    id: number;
+    duration: number;
+    uri: string;
+    isPlaying: boolean;
+}

@@ -28,6 +28,26 @@ export default class Client{
 		await this.sendCommand("pl_pause");
 	}
 
+	public async stop(){
+		await this.sendCommand("pl_stop");
+	}
+
+	public async next(){
+		await this.sendCommand("pl_next");
+	}
+
+	public async previous(){
+		await this.sendCommand("pl_previous");
+	}
+
+	public async emptyPlaylist(){
+		await this.sendCommand("pl_empty");
+	}
+
+	public async removeFromPlaylist(id: number){
+		await this.sendCommand("pl_delete",{id});
+	}
+
 	//endregion
 
 	//region GETTERS
@@ -36,11 +56,25 @@ export default class Client{
 	}
 
 	public async isPlaying():Promise<boolean>{
-		return (await this.stats()).state === "playing";
+		return (await this.getState()) === "playing";
+	}
+
+	/**
+	 * State of vlc ( playing / paused / stop );
+	 */
+	public async getState():Promise<string>{
+		return (await this.stats()).state;
 	}
 
 	public async getTime():Promise<number>{
 		return (await this.stats()).time;
+	}
+
+	/**
+	 * Media progress from 0-100
+	 */
+	public async getProgress():Promise<number>{
+		return ((await this.getTime()) / (await this.getLength())) * 100;
 	}
 
 	public async getLength():Promise<number>{
