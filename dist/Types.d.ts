@@ -57,9 +57,9 @@ export declare enum AspectRatio {
     _239_100 = "239:100"
 }
 export interface Tracks {
-    video?: VideoTrack[];
-    audio?: AudioTrack[];
-    subtitle?: SubtitleTrack[];
+    video: VideoTrack[];
+    audio: AudioTrack[];
+    subtitle: SubtitleTrack[];
 }
 export interface Track {
     streamIndex: number;

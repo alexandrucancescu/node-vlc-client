@@ -67,9 +67,9 @@ export enum AspectRatio {
 }
 
 export interface Tracks {
-	video?: VideoTrack[],
-	audio?: AudioTrack[],
-	subtitle?: SubtitleTrack[],
+	video: VideoTrack[],
+	audio: AudioTrack[],
+	subtitle: SubtitleTrack[],
 }
 
 export interface Track{

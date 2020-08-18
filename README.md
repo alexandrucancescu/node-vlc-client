@@ -173,16 +173,19 @@ Returns an array of [PlaylistEntries](#PlaylistEntry).
 ### .getAudioTracks()
 
 
+### .getVideoTracks()
+
+
+### .getTracks()
+Retrieve tracks/streams.
+Returns [**Tracks**](#tracks).
+
+### .availableAspectRations()
+
+
 ## Types
 
 ### PlaylistEntry
-
-- **name**: string
-- **id**: number
-- **duration**: number 
-- **uri**: string
-- **isCurrent**: boolean
-
 ```typescript
 interface PlaylistEntry{
 	name: string;
@@ -193,16 +196,50 @@ interface PlaylistEntry{
 }
 ```
 
+### Tracks
+```typescript
+interface Tracks {
+    video: VideoTrack[],
+    audio: AudioTrack[],
+    subtitle: SubtitleTrack[],
+}
+```
 
-### .getVideoTracks()
-
-
-### .getTracks()
-
-
-### .availableAspectRations()
-
-
+### VideoTrack
+```typescript
+interface VideoTrack {
+    streamIndex: number,
+    Type: "Audio" | "Video" | "Subtitle",
+    Language?: string,
+    Codec?: string,
+    Frame_rate: string,
+    Decoded_format: string,
+    Video_resolution: string,
+    Buffer_dimensions: string,
+    Orientation: string,
+}
+```
+### AudioTrack
+```typescript
+interface AudioTrack {
+    streamIndex: number,
+    Type: "Audio" | "Video" | "Subtitle",
+    Language?: string,
+    Codec?: string,
+    Channels: string,
+    Bits_per_sample: string,
+    Sample_rate: string
+}
+```
+### SubtitleTrack
+```typescript
+interface SubtitleTrack {
+    streamIndex: number,
+    Type: "Audio" | "Video" | "Subtitle",
+    Language?: string,
+    Codec?: string,
+}
+```
 
 
 ## License
