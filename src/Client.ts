@@ -42,6 +42,12 @@ export default class Client{
 		await this.sendCommand("pl_delete",{id});
 	}
 
+	public async playFromPlaylist(entryId: number){
+		await this.sendCommand("pl_play",{
+			id: entryId
+		})
+	}
+
 	public async jumpForward(seconds: number){
 		await this.sendCommand("seek",{
 			val: `+${seconds}`
@@ -184,6 +190,14 @@ export default class Client{
 		return (await this.getTracks()).video;
 	}
 
+	public async getChapters():Promise<number[]>{
+		return (await this.status()).information.chapters;
+	}
+
+	public async getCurrentChapter():Promise<number>{
+		return (await this.status()).information.chapter;
+	}
+
 	/**
 	 * Get all tracks (video,audio,subs)
 	 */
@@ -212,6 +226,8 @@ export default class Client{
 
 		return tracks;
 	}
+
+	//todo get album art
 	/**
 	 * Returns an array with all the available aspect ratios
 	 */

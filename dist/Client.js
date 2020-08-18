@@ -57,6 +57,13 @@ class Client {
             yield this.sendCommand("pl_delete", { id });
         });
     }
+    playFromPlaylist(entryId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("pl_play", {
+                id: entryId
+            });
+        });
+    }
     jumpForward(seconds) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.sendCommand("seek", {
@@ -221,6 +228,16 @@ class Client {
             return (yield this.getTracks()).video;
         });
     }
+    getChapters() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.status()).information.chapters;
+        });
+    }
+    getCurrentChapter() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.status()).information.chapter;
+        });
+    }
     /**
      * Get all tracks (video,audio,subs)
      */
@@ -255,6 +272,7 @@ class Client {
             return tracks;
         });
     }
+    //todo get album art
     /**
      * Returns an array with all the available aspect ratios
      */

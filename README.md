@@ -98,7 +98,11 @@ Play the previous media in playlist
 Removes all entries from the playlist
 
 ### .removeFromPlaylist(id: number)
-Removes the item with the given id from palylist.
+Removes the item with the given id from palylist.  
+To get the id see [**.getPlaylist()**](#getPlaylist).
+
+### .playFromPlaylist(entryId: number)
+Play an entry from playlist by id.  
 To get the id see [**.getPlaylist()**](#getPlaylist).
 
 ### .jumpForward(seconds: number)
@@ -170,20 +174,52 @@ Get the entries in the playlist
 Returns as string the current aspect ratio
 
 ### .getSubtitleTracks() -> [SubtitleTrack[]](#tracks)
-Retrieve subtitle tracks.
+Get subtitle tracks.
 
 ### .getAudioTracks() -> [AudioTrack[]](#audiotrack)
-Retrieve audio tracks.
+Get audio tracks.
 
 ### .getVideoTracks() -> [VideoTrack[]](#videotrack)
-Retrieve video tracks.
+Get video tracks.
 
 ### .getTracks() -> [Tracks](#tracks)
-Retrieve all tracks/streams including video, audio, subtitles.  
+Get all tracks/streams including video, audio, subtitles.
 
-### .availableAspectRations()
+### .getChapters() -> number[]
+Returns an array of numbers representing all the chapters
+of a movie. Usually starts at 0.
+
+### .getCurrentChapter() -> number
+Returns the current chapter of a video that is playing.
+
+### .availableAspectRations(): string[]
 Returns **synchronous** an array of all the available aspect ratios
 as string array.
+
+## Setters
+
+### .setTime(time: number)
+Set the time of playback. Time arg should be an int. 
+
+### .setProgress(progress: number)
+Set progress of media playback 0-100 range.
+Progress can be a number with decimals.
+
+
+### .setVolume(volume: number)
+Set the volume range 0-100.
+
+
+### .setVolumeRaw()
+Set volume as VLC represents it 0-512
+
+### .setFullscreen(val: boolean)
+Set if VLC should be fullscreen
+
+### .setAspectRation(ar: string)
+Set the aspect ratio of video.
+To get a list of available aspect ratios
+use **.availableAspectRations()**.
 
 ## Types
 

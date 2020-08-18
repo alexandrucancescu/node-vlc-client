@@ -10,6 +10,7 @@ export default class Client {
     previous(): Promise<void>;
     emptyPlaylist(): Promise<void>;
     removeFromPlaylist(id: number): Promise<void>;
+    playFromPlaylist(entryId: number): Promise<void>;
     jumpForward(seconds: number): Promise<void>;
     jumpBackwards(seconds: number): Promise<void>;
     toggleFullscreen(): Promise<void>;
@@ -72,6 +73,8 @@ export default class Client {
     getSubtitleTracks(): Promise<SubtitleTrack[]>;
     getAudioTracks(): Promise<AudioTrack[]>;
     getVideoTracks(): Promise<VideoTrack[]>;
+    getChapters(): Promise<number[]>;
+    getCurrentChapter(): Promise<number>;
     /**
      * Get all tracks (video,audio,subs)
      */
