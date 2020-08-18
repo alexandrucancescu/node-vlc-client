@@ -104,6 +104,8 @@ export default class Client {
     private sendCommand;
     private makeRequest;
     private requestPlaylist;
+    private log;
+    private error;
     private static parsePlaylistEntries;
     private static validateOptions;
 }

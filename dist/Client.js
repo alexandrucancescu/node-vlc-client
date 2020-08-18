@@ -345,17 +345,15 @@ class Client {
             if (data) {
                 url += `?${querystring_1.stringify(data)}`;
             }
-            console.log(url);
+            this.log(url);
             const response = yield phin({
                 url,
                 method: "GET",
                 headers,
                 data,
             });
-            console.log(response.url, response.statusMessage, response.statusCode);
+            this.log(response.url, response.statusMessage, response.statusCode);
             if (response.complete && response.statusCode === 200) {
-                // console.log(response.body.toString());
-                // return xml.parse(response.body.toString()).root;
                 return JSON.parse(response.body.toString());
             }
             else {
@@ -370,13 +368,13 @@ class Client {
                 "Authorization": `Basic ${Buffer.from(auth).toString("base64")}`,
             };
             let url = `http://${this.options.ip}:${this.options.port}/requests/playlist.json`;
-            console.log(url);
+            this.log(url);
             const response = yield phin({
                 url,
                 method: "GET",
                 headers,
             });
-            console.log(response.url, response.statusMessage, response.statusCode);
+            this.log(response.url, response.statusMessage, response.statusCode);
             if (response.complete && response.statusCode === 200) {
                 return Client.parsePlaylistEntries(response.body);
             }
@@ -387,6 +385,16 @@ class Client {
     }
     //endregion
     //region HELPERS
+    log(...args) {
+        if (this.options.log === true) {
+            console.error(...args);
+        }
+    }
+    error(...args) {
+        if (this.options.log === true) {
+            console.error(...args);
+        }
+    }
     static parsePlaylistEntries(buffer) {
         const playlistResponse = JSON.parse(buffer.toString());
         return playlistResponse.children
@@ -416,6 +424,7 @@ class Client {
         if (typeof options.password !== "string") {
             throw new Error("Password is required and should be a string");
         }
+        options.log = (options.log === true);
         return options;
     }
 }

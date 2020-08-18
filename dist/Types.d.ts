@@ -3,6 +3,7 @@ export interface ClientOptions {
     port: number;
     username?: string;
     password: string;
+    log?: boolean;
 }
 export interface VlcStatus {
     fullscreen: boolean;

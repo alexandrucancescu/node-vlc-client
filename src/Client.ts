@@ -306,7 +306,7 @@ export default class Client{
 			url += `?${encodeQuery(data)}`;
 		}
 
-		console.log(url);
+		this.log(url);
 
 		const response = await phin({
 			url,
@@ -315,11 +315,9 @@ export default class Client{
 			data,
 		});
 
-		console.log(response.url,response.statusMessage,response.statusCode);
+		this.log(response.url,response.statusMessage,response.statusCode);
 
 		if(response.complete && response.statusCode === 200){
-			// console.log(response.body.toString());
-			// return xml.parse(response.body.toString()).root;
 			return JSON.parse(response.body.toString());
 		}else{
 			throw new Error(`Request error | Code ${response.statusCode} | Message ${response.statusMessage}`);
@@ -335,7 +333,7 @@ export default class Client{
 
 		let url = `http://${this.options.ip}:${this.options.port}/requests/playlist.json`;
 
-		console.log(url);
+		this.log(url);
 
 		const response = await phin({
 			url,
@@ -343,7 +341,7 @@ export default class Client{
 			headers,
 		});
 
-		console.log(response.url,response.statusMessage,response.statusCode);
+		this.log(response.url,response.statusMessage,response.statusCode);
 
 		if(response.complete && response.statusCode === 200){
 			return Client.parsePlaylistEntries(response.body as unknown as Buffer);
@@ -354,6 +352,18 @@ export default class Client{
 	//endregion
 
 	//region HELPERS
+
+	private log(...args:any[]){
+		if(this.options.log === true){
+			console.error(...args);
+		}
+	}
+
+	private error(...args:any[]){
+		if(this.options.log === true){
+			console.error(...args);
+		}
+	}
 
 	private static parsePlaylistEntries(buffer: Buffer):PlaylistEntry[]{
 		const playlistResponse = JSON.parse(buffer.toString());
@@ -385,6 +395,7 @@ export default class Client{
 		if(typeof options.password !== "string"){
 			throw new Error("Password is required and should be a string");
 		}
+		options.log = (options.log ===true);
 
 		return options;
 	}
