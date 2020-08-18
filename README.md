@@ -99,7 +99,7 @@ Removes all entries from the playlist
 
 ### .removeFromPlaylist(id: number)
 Removes the item with the given id from palylist.
-To get the id see [**.getPlaylist()**](#getPlaylist)
+To get the id see [**.getPlaylist()**](#getPlaylist).
 
 ### .jumpForward()
 
@@ -157,11 +157,10 @@ Audio delay from video stream in seconds
 ### .getSubtitleDelay()
 Subtitle delay from video stream in seconds
 
-<h4 id="getPlaylist>
+<h3 id="getPlaylist">
 .getPlaylist()
-</h4>
+</h3>
 Returns an array of PlaylistEntries. 
-See PlaylistEntry.
 
 ### .getAspectRatio()
 
