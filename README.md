@@ -8,7 +8,7 @@
 An intuitive library to control VLC with simple function calls 
 using VLC's own HTTP interface, written in typescript.
 
-### Features
+## Features
 
 - [x] Play, Pause, Seek
 - [x] Get and set time, length, volume
@@ -19,13 +19,13 @@ using VLC's own HTTP interface, written in typescript.
 - [ ] Audio eq, effects
 - [ ] VLC instances discovery on the network
 
-### Installation
+## Installation
 
 ```shell script
 npm install --save vlc-client
 ```
 
-### Usage
+## Usage
 
 **Typescript**
 ```typescript
@@ -60,9 +60,9 @@ await vlc.pause();
 await vlc.setTime(3100);
 ```
 
-### API
+## API
 
-#### VLC.Client
+### VLC.Client
 ```typescript
 new VLC.Client(options);
 ```
@@ -73,7 +73,116 @@ new VLC.Client(options);
 - **username**: username of VLC web interface
 - **password**: password of VLC web interface
 
+## **Methods**
 
-### License
+## Actions
+### .play()
+Resume the playback if paused
+
+### .pause()
+Pause the playback
+
+### .togglePlay()
+Pauses if playing, and resumes the playback if paused
+
+### .stop()
+Stops the playback
+
+### .next()
+Play the next media in playlist
+
+### .previous()
+Play the previous media in playlist
+
+### .emptyPlaylist()
+Removes all entries from the playlist
+
+### .removeFromPlaylist(id: number)
+Removes the item with the given id from palylist.
+To get the id see [**.getPlaylist()**](#getPlaylist)
+
+### .jumpForward()
+
+
+### .jumpBackwards()
+
+
+### .toggleFullscreen()
+
+
+### .increaseVolume()
+
+
+### .decreaseVolume()
+
+## Getters
+
+### .status(): Promise\<VlcStatus\>
+Returns an object with all the info that VLC provides except playlist info
+
+### .isPlaying(): Promise\<boolean\>
+
+
+### .isPaused(): Promise\<boolean\>
+
+
+### .isStopped(): Promise\<boolean\>
+
+
+### .isFullscreen(): Promise\<boolean\>
+
+
+### .getPlaybackState(): Promise\<string\>
+State of vlc ( playing / paused / stop )
+
+### .getTime()
+Time of playback in seconds
+
+### .getProgress()
+Media playback progress from 0-100
+
+### .getLength()
+Length of the current media playing in seconds
+
+### .getVolume()
+Get the volume in a 0-100 range
+
+### .getVolumeRaw()
+Get the current volume as VLC represents it
+from 0-512, where 256 is 100% and 512 is 200%
+
+### .getAudioDelay()
+Audio delay from video stream in seconds
+
+### .getSubtitleDelay()
+Subtitle delay from video stream in seconds
+
+<h4 id="getPlaylist>
+.getPlaylist()
+</h4>
+Returns an array of PlaylistEntries. 
+See PlaylistEntry.
+
+### .getAspectRatio()
+
+
+### .getSubtitleTracks()
+
+
+### .getAudioTracks()
+
+
+### .getVideoTracks()
+
+
+### .getTracks()
+
+
+### .availableAspectRations()
+
+
+
+
+## License
 
 [MIT](LICENCE)

@@ -129,7 +129,7 @@ class Client {
         });
     }
     /**
-     * State of vlc ( playing / paused / stop );
+     * State of vlc ( playing / paused / stop )
      */
     getPlaybackState() {
         return __awaiter(this, void 0, void 0, function* () {

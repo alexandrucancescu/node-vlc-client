@@ -105,7 +105,7 @@ export default class Client{
 	}
 
 	/**
-	 * State of vlc ( playing / paused / stop );
+	 * State of vlc ( playing / paused / stop )
 	 */
 	public async getPlaybackState():Promise<string>{
 		return (await this.status()).state;

@@ -32,7 +32,7 @@ export default class Client {
     isStopped(): Promise<boolean>;
     isFullscreen(): Promise<boolean>;
     /**
-     * State of vlc ( playing / paused / stop );
+     * State of vlc ( playing / paused / stop )
      */
     getPlaybackState(): Promise<string>;
     /**
