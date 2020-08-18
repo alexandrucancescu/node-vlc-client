@@ -101,39 +101,40 @@ Removes all entries from the playlist
 Removes the item with the given id from palylist.
 To get the id see [**.getPlaylist()**](#getPlaylist).
 
-### .jumpForward()
+### .jumpForward(seconds: number)
+Seek playback forward by given seconds
 
-
-### .jumpBackwards()
-
+### .jumpBackwards(seconds: number)
+Seek playback backwards by given seconds
 
 ### .toggleFullscreen()
+Toggle if VLC is fullscreen
 
-
-### .increaseVolume()
-
+### .increaseVolume(increaseBy: number)
+Increase the volume by given int, range 0-100
 
 ### .decreaseVolume()
+Decrease the volume by given int, range 0-100
 
 ## Getters
 
 ### .status(): Promise\<VlcStatus\>
 Returns an object with all the info that VLC provides except playlist info
 
-### .isPlaying(): Promise\<boolean\>
+### .isPlaying()
+Returns true/false if is playing
 
+### .isPaused()
+Returns true/false if is paused
 
-### .isPaused(): Promise\<boolean\>
+### .isStopped()
+Returns true/false if is stopped
 
+### .isFullscreen()
+Returns true/false if VLC is fullscreen
 
-### .isStopped(): Promise\<boolean\>
-
-
-### .isFullscreen(): Promise\<boolean\>
-
-
-### .getPlaybackState(): Promise\<string\>
-State of vlc ( playing / paused / stop )
+### .getPlaybackState()
+State of vlc ( playing / paused / stop ) as string
 
 ### .getTime()
 Time of playback in seconds
@@ -158,30 +159,31 @@ Audio delay from video stream in seconds
 Subtitle delay from video stream in seconds
 
 <h3 id="getPlaylist">
-.getPlaylist()
+.getPlaylist() -> <a href="#PlaylistEntry">
+        PlaylistEntry[]
+    </a>
 </h3>
 
-
-Returns an array of [PlaylistEntries](#PlaylistEntry). 
+Get the entries in the playlist 
 
 ### .getAspectRatio()
+Returns as string the current aspect ratio
 
+### .getSubtitleTracks() -> [SubtitleTrack[]](#tracks)
+Retrieve subtitle tracks.
 
-### .getSubtitleTracks()
+### .getAudioTracks() -> [AudioTrack[]](#audiotrack)
+Retrieve audio tracks.
 
+### .getVideoTracks() -> [VideoTrack[]](#videotrack)
+Retrieve video tracks.
 
-### .getAudioTracks()
-
-
-### .getVideoTracks()
-
-
-### .getTracks()
-Retrieve tracks/streams.
-Returns [**Tracks**](#tracks).
+### .getTracks() -> [Tracks](#tracks)
+Retrieve all tracks/streams including video, audio, subtitles.  
 
 ### .availableAspectRations()
-
+Returns **synchronous** an array of all the available aspect ratios
+as string array.
 
 ## Types
 
