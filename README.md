@@ -160,7 +160,7 @@ Subtitle delay from video stream in seconds
 <h3 id="getPlaylist">
 .getPlaylist()
 </h3>
-Returns an array of PlaylistEntries. 
+Returns an array of [PlaylistEntries](#PlaylistEntry). 
 
 ### .getAspectRatio()
 
@@ -169,6 +169,27 @@ Returns an array of PlaylistEntries.
 
 
 ### .getAudioTracks()
+
+
+## Types
+
+### PlaylistEntry
+
+- **name**: string
+- **id**: number
+- **duration**: number 
+- **uri**: string
+- **isCurrent**: boolean
+
+```typescript
+interface PlaylistEntry{
+	name: string;
+	id: number;
+	duration: number;
+	uri: string;
+	isCurrent: boolean;
+}
+```
 
 
 ### .getVideoTracks()
