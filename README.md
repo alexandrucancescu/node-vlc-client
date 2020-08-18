@@ -6,13 +6,7 @@
 
 
 An intuitive library to control VLC with simple function calls 
-using VLC's own HTTP interface.
-
-### Installation
-
-```shell script
-npm install --save vlc-client
-```
+using VLC's own HTTP interface, written in typescript.
 
 ### Features
 
@@ -24,6 +18,61 @@ npm install --save vlc-client
 - [ ] Auto polling for changes
 - [ ] Audio eq, effects
 - [ ] VLC instances discovery on the network
+
+### Installation
+
+```shell script
+npm install --save vlc-client
+```
+
+### Usage
+
+**Typescript**
+```typescript
+import * as VLC from "vlc-client"
+
+const vlc = new VLC.Client({
+    ip: "localhost",
+    port: 8080,
+    username: "steve_aoki", //username is optional
+    password: "edm"
+});
+```
+
+**Javascript**
+```typescript
+const VLC = require("vlc-client");
+
+const vlc = new VLC.Client({
+    ip: "localhost",
+    port: 8080,
+    username: "steve_aoki", //username is optional
+    password: "edm"
+});
+```
+
+All methods on the Client class are async
+```typescript
+await vlc.isPlaying();
+
+await vlc.pause();
+
+await vlc.setTime(3100);
+```
+
+### API
+
+#### VLC.Client
+```typescript
+new VLC.Client(options);
+```
+
+**options**:
+- **ip**: the ip of the computer where VLC is running
+- **port**: port of VLC web interface
+- **username**: username of VLC web interface
+- **password**: password of VLC web interface
+
 
 ### License
 
