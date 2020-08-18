@@ -1,7 +1,7 @@
 {
   "name": "vlc-client",
   "description": "Node client/remote implementation to control VLC with simple function calls using VLC's own HTTP interface",
-  "version": "0.0.5-alpha",
+  "version": "0.0.6-alpha",
   "private": false,
   "main": "dist/index.js",
   "scripts": {},
