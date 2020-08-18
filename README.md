@@ -118,7 +118,7 @@ Decrease the volume by given int, range 0-100
 
 ## Getters
 
-### .status(): Promise\<VlcStatus\>
+### .status() -> VlcStatus
 Returns an object with all the info that VLC provides except playlist info
 
 ### .isPlaying()
