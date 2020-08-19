@@ -1,4 +1,13 @@
-import {AspectRatio, ClientOptions, PlaylistEntry, Track, AudioTrack, VideoTrack, SubtitleTrack, Tracks, VlcStatus} from "./Types";
+import {
+	AspectRatio,
+	AudioTrack,
+	ClientOptions,
+	PlaylistEntry,
+	SubtitleTrack, Track,
+	Tracks,
+	VideoTrack,
+	VlcStatus,
+} from "./Types";
 import * as phin from "phin"
 import {stringify as encodeQuery, unescape} from "querystring"
 
@@ -213,7 +222,7 @@ export default class Client{
 			if(key.substring(0,6)==="Stream"){
 				let streamIndex = Number.parseInt(key.substring(7));
 				if(!isNaN(streamIndex)){
-					let track:Track = stats.information.category[key];
+					let track = stats.information.category[key] as Track;
 					track.streamIndex = streamIndex;
 					switch (track.Type) {
 						case "Audio": tracks.audio.push(<AudioTrack>track);break;

@@ -6,7 +6,3 @@ before_install:
   # - sudo apt update
   - sudo apt-get -y install vlc
   - ls -l
-
-before_script:
-  - wget -O video1.mp4 "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4"
-  - vlc -I http --http-port 8080 --http-host localhost --http-password 1234 video1.mp4 &

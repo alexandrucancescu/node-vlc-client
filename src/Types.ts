@@ -35,16 +35,19 @@ export interface VlcStatus {
 		chapters: number[],
 		title?: any, //todo find type
 		category: {
-			meta: {
-				showName?: string,
-				seasonNumber?: string,
-				episodeNumber?: string,
-				filename:string,
-				[key: string]: string,
-			}
+			meta: VlcMeta
+			[key: string]: VlcStream | VlcMeta
 		},
 		titles: any[], //todo find type
 	}
+}
+
+export interface VlcMeta{
+	showName?: string,
+	seasonNumber?: string,
+	episodeNumber?: string,
+	filename:string,
+	[key: string]: string,
 }
 
 export interface PlaylistEntry{
@@ -72,11 +75,14 @@ export interface Tracks {
 	subtitle: SubtitleTrack[],
 }
 
-export interface Track{
-	streamIndex: number,
+export interface VlcStream{
 	Type: "Audio" | "Video" | "Subtitle",
 	Language?: string,
 	Codec?: string,
+}
+
+export interface Track extends VlcStream{
+	streamIndex: number;
 }
 
 export interface VideoTrack extends Track{
