@@ -68,4 +68,8 @@ describe("CORE FUNCTIONALITIES",()=>{
 		expect(await vlc.getVolumeRaw()).to.equal(512);
 		expect(await vlc.getVolume()).to.equal(100);
 	})
+
+	it("should retrieve aspect ratio", async ()=>{
+		console.log("aspect ratio",await vlc.getAspectRatio());
+	});
 });
