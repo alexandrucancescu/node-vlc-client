@@ -1,13 +1,17 @@
 language: node_js
 node_js:
   - 14
+dist: xenial
+services:
+  - xvfb
 
+script: xvfb-run --server-args="-screen 0 1024x768x24" npm test
 before_install:
   # - sudo apt update
   - sudo apt-get -y install vlc
 
 before_script:
-  - nohup vlc -I http --http-port 8080 --http-host localhost --http-password 1234 "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4" 2> vlc.log > /dev/null
+  - screen -d -m "vlc -I http --http-port 8080 --http-host localhost --http-password 1234 "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4" 2> vlc.log > /dev/null"
 
 after_failure:
   - cat vlc.log
