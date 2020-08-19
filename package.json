@@ -1,7 +1,7 @@
 {
   "name": "vlc-client",
   "description": "Node client/remote implementation to control VLC with simple function calls using VLC's own HTTP interface",
-  "version": "0.0.8-alpha",
+  "version": "1.0.0",
   "private": false,
   "main": "dist/index.js",
   "scripts": {
@@ -14,9 +14,6 @@
     "type": "git",
     "url": "https://github.com/alexandrucancescu/node-vlc-client"
   },
-  "files": [
-    "dist/*"
-  ],
   "types": "dist/index.d.ts",
   "typings": "dist/index.d.ts",
   "keywords": [
