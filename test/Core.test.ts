@@ -40,7 +40,7 @@ describe("CORE FUNCTIONALITIES",()=>{
 			"chapter", "chapters", "category", "category"
 		);
 		expect(status.information.category)
-			.to.have.key("meta").and.not.be.null;
+			.to.include.keys("meta");
 	});
 
 	it("should know playback state",async ()=>{
