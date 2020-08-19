@@ -44,4 +44,21 @@ describe("CORE FUNCTIONALITIES",()=>{
 		expect(await vlc.isPaused()).to.be.false;
 		expect(await vlc.isStopped()).to.be.false;
 	})
+
+	it("should pause",async ()=>{
+		await vlc.pause();
+		expect(await vlc.isPaused()).to.be.true;
+	})
+
+	it("should play",async ()=>{
+		await vlc.play();
+		expect(await vlc.isPaused()).to.be.false;
+		expect(await vlc.isPlaying()).to.be.true;
+	})
+
+	it("should change and retrieve volume",async ()=>{
+		await vlc.setVolumeRaw(512);
+		expect(await vlc.getVolumeRaw()).to.equal(512);
+		expect(await vlc.getVolume()).to.equal(100);
+	})
 });

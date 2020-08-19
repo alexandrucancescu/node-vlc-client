@@ -42,5 +42,19 @@ mocha_1.describe("CORE FUNCTIONALITIES", () => {
         chai_1.expect(yield vlc.isPaused()).to.be.false;
         chai_1.expect(yield vlc.isStopped()).to.be.false;
     }));
+    it("should pause", () => __awaiter(void 0, void 0, void 0, function* () {
+        yield vlc.pause();
+        chai_1.expect(yield vlc.isPaused()).to.be.true;
+    }));
+    it("should play", () => __awaiter(void 0, void 0, void 0, function* () {
+        yield vlc.play();
+        chai_1.expect(yield vlc.isPaused()).to.be.false;
+        chai_1.expect(yield vlc.isPlaying()).to.be.true;
+    }));
+    it("should change and retrieve volume", () => __awaiter(void 0, void 0, void 0, function* () {
+        yield vlc.setVolumeRaw(512);
+        chai_1.expect(yield vlc.getVolumeRaw()).to.equal(512);
+        chai_1.expect(yield vlc.getVolume()).to.equal(100);
+    }));
 });
 //# sourceMappingURL=Core.test.js.map
