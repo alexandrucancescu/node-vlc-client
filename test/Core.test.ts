@@ -9,7 +9,7 @@ let vlcProcess: ChildProcess;
 let vlc: Client;
 
 before(async ()=>{
-	if(!isCi()){
+	if(!isCi){
 		vlcProcess =await spawnVlc();
 	}
 	vlc = new Client({
@@ -20,7 +20,7 @@ before(async ()=>{
 });
 
 after(()=>{
-	if(!isCi()){
+	if(!isCi){
 		vlcProcess.kill();
 	}
 });
