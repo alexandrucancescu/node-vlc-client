@@ -3,12 +3,15 @@ import {describe, after, before} from "mocha"
 import {spawnVlc} from "./Spawner";
 import {ChildProcess} from "child_process";
 import {Client} from "../src";
+import * as isCi from "is-ci";
 
 let vlcProcess: ChildProcess;
 let vlc: Client;
 
 before(async ()=>{
-	vlcProcess =await spawnVlc();
+	if(!isCi()){
+		vlcProcess =await spawnVlc();
+	}
 	vlc = new Client({
 		ip: "localhost",
 		port: 8080,
@@ -17,7 +20,9 @@ before(async ()=>{
 });
 
 after(()=>{
-	vlcProcess.kill();
+	if(!isCi()){
+		vlcProcess.kill();
+	}
 });
 
 describe("CORE FUNCTIONALITIES",()=>{
