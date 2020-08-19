@@ -37,7 +37,6 @@ export async function spawnVlc(): Promise<ChildProcess> {
 				rej(error);
 				vlcProcess.kill();
 			}else{
-				console.log("Data",error.toString());
 				res(vlcProcess);
 			}
 		}
