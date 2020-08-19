@@ -7,7 +7,7 @@ before_install:
   - sudo apt-get -y install vlc
 
 before_script:
-  - vlc -I http --http-port 8080 --http-host localhost --http-password 1234 "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4" > vlc.log &
+  - nohup vlc -I http --http-port 8080 --http-host localhost --http-password 1234 "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4" 2> vlc.log > /dev/null
 
 after_failure:
   - cat vlc.log
