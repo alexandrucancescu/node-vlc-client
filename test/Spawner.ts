@@ -1,5 +1,8 @@
 import {ChildProcess, spawn} from "child_process";
 import {platform} from "os";
+import * as isCi from "is-ci"
+import {createWriteStream} from "fs";
+import * as path from "path";
 
 let cmd;
 
@@ -25,7 +28,15 @@ const args = [
 export async function spawnVlc(): Promise<ChildProcess> {
 	const vlcProcess: ChildProcess = spawn(cmd, args, {
 		stdio: "pipe"
-	})
+	});
+
+	if(isCi){
+		const output = createWriteStream(path.join(__dirname,"vlc.log"));
+		vlcProcess.stderr.pipe(output);
+		vlcProcess.on("exit",()=>{
+			output.close();
+		})
+	}
 
 	return new Promise<ChildProcess>((res,rej)=>{
 		const listener = (isError: boolean,error: Error)=>{

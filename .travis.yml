@@ -1,17 +1,31 @@
 language: node_js
+
 node_js:
   - 14
-dist: xenial
+
+dist: bionic
+
+addons:
+  apt:
+    packages:
+      - vlc
+
 services:
   - xvfb
 
-script: xvfb-run --server-args="-screen 0 1024x768x24" npm test
+#script: xvfb-run --server-args="-screen 0 1024x768x24" npm test
+
+#before_install:
+#   - sudo apt update
+#  - sudo apt-get -y install vlc
+
 before_install:
-  # - sudo apt update
-  - sudo apt-get -y install vlc
+  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
+  - sleep 3
+#  - screen -d -m "vlc -I http --http-port 8080 --http-host localhost --http-password 1234 "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4" 2> vlc.log > /dev/null"
 
 before_script:
-  - screen -d -m "vlc -I http --http-port 8080 --http-host localhost --http-password 1234 "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4" 2> vlc.log > /dev/null"
+  - vlc -I http --http-port 8080 --http-host localhost --http-password 1234 "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4" 2> vlc.log > /dev/null &
 
 after_failure:
   - cat vlc.log

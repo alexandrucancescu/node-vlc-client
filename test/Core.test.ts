@@ -11,6 +11,8 @@ let vlc: Client;
 before(async ()=>{
 	if(!isCi){
 		vlcProcess =await spawnVlc();
+	}else{
+		console.log("IS CI!");
 	}
 	vlc = new Client({
 		ip: "localhost",
