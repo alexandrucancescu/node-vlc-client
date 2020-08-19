@@ -3,7 +3,7 @@
 ![npm](https://img.shields.io/npm/v/vlc-client?style=for-the-badge)
 ![NPM](https://img.shields.io/npm/l/vlc-client?color=crimson&style=for-the-badge)
 ![npm bundle size](https://img.shields.io/bundlephobia/min/vlc-client?color=green&label=size&style=for-the-badge)
-![Travis (.org)](https://img.shields.io/travis/alexandrucancescu/travis-ci-test?logo=travis-ci&logoColor=ffd700&style=for-the-badge)
+![Travis (.org)](https://img.shields.io/travis/alexandrucancescu/node-vlc-client?logo=travis-ci&logoColor=ffd700&style=for-the-badge)
 
 An intuitive library to control VLC with simple function calls 
 using VLC's own HTTP interface, written in typescript.
