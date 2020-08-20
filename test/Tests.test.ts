@@ -1,6 +1,6 @@
 import {expect} from "chai"
 import {after, before, describe} from "mocha"
-import {spawnVlc} from "./Spawner";
+import {spawnVlc, TestFiles, downloadTestFiles, removeTestFiles} from "./Spawner";
 import {ChildProcess} from "child_process";
 import {Client} from "../src";
 import * as isCi from "is-ci";
@@ -8,13 +8,12 @@ import {AspectRatio} from "../src/Types";
 
 let vlcProcess: ChildProcess;
 let vlc: Client;
+let testFiles : TestFiles;
 
 before(async ()=>{
+	testFiles = await downloadTestFiles();
 	if(!isCi){
 		vlcProcess =await spawnVlc();
-		console.log("spawned");
-	}else{
-		console.log("IS CI!");
 	}
 	vlc = new Client({
 		ip: "localhost",
@@ -23,13 +22,25 @@ before(async ()=>{
 	})
 });
 
-after(()=>{
+after(async ()=>{
+	// await removeTestFiles();
 	if(!isCi){
 		vlcProcess.kill();
 	}
 });
 
 describe("CORE FUNCTIONALITIES",()=>{
+	it("should open media",async ()=>{
+		await vlc.playFile(testFiles.video[0].path);
+		await wait(1000);
+		await vlc.play();
+
+		const status = await vlc.status();
+
+		expect(status.information.category.meta.filename)
+			.to.equal(testFiles.video[0].name);
+	});
+
 	it("should return status of vlc",async ()=>{
 		const status = await vlc.status();
 
@@ -78,4 +89,28 @@ describe("CORE FUNCTIONALITIES",()=>{
 		await vlc.setAspectRation(AspectRatio._4_3);
 		expect(await vlc.getAspectRatio()).to.equal(AspectRatio._4_3);
 	});
+
+	it("should change media",async()=>{
+		await vlc.playFile(testFiles.audio[0].path);
+		await wait(2000);
+
+		const status = await vlc.status();
+
+		expect(status.information.category.meta.filename)
+			.to.equal(testFiles.audio[0].name);
+	});
+
+	it("should retrieve album art",async ()=>{
+		const result = await vlc.getAlbumArt();
+
+		expect(result).to.have.keys("contentType","buffer");
+		expect(Buffer.isBuffer(result.buffer)).to.be.true;
+		expect(result.buffer.byteLength).to.be.greaterThan(0);
+		expect(result.contentType).to.equal("image/jpeg");
+	});
 });
+
+
+async function wait(ms: number){
+	return new Promise(res => setTimeout(res,ms));
+}
