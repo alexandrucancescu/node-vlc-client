@@ -58,6 +58,16 @@ describe("CORE FUNCTIONALITIES",()=>{
 			.to.include.keys("meta");
 	});
 
+	it("should return file name",async ()=>{
+		expect(await vlc.getFileName()).to.equal(testFiles.video[0].name);
+	});
+
+	it("should return meta", async ()=>{
+		expect(await vlc.meta()).to.not.be.null
+			.and.not.be.undefined
+			.and.to.include.keys()
+	})
+
 	it("should know playback state",async ()=>{
 		expect(await vlc.getPlaybackState()).to.equal("playing");
 		expect(await vlc.isPlaying()).to.be.true;

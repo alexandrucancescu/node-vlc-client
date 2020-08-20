@@ -6,7 +6,8 @@
 ![Travis (.org)](https://img.shields.io/travis/alexandrucancescu/node-vlc-client?logo=travis-ci&logoColor=ffd700&style=for-the-badge)
 
 An intuitive library to control VLC with simple function calls 
-using VLC's own HTTP interface, written in typescript.
+using VLC's own HTTP interface, written in typescript. Covers almost all
+of VLC's functions that can be controlled with the HTTP interface
 
 ## Features
 
@@ -354,9 +355,22 @@ interface SubtitleTrack {
 ### AlbumArtResult
 
 ```typescript
-AlbumArtResult {
+interface AlbumArtResult {
 	contentType: string, // image/jpeg , image/png , etc
 	buffer: Buffer, // album art image as buffer
+}
+```
+
+### VlcMeta
+
+```typescript
+interface VlcMeta{
+	showName?: string, //optional
+	seasonNumber?: string, //optional
+	episodeNumber?: string, //optional
+	filename:string,
+    [key: string]: string,
+    ...
 }
 ```
 
