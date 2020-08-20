@@ -370,7 +370,7 @@ interface VlcMeta{
 	episodeNumber?: string, //optional
 	filename:string,
     [key: string]: string,
-    ...
+    ... // much more properties
 }
 ```
 

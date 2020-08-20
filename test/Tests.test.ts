@@ -63,9 +63,11 @@ describe("CORE FUNCTIONALITIES",()=>{
 	});
 
 	it("should return meta", async ()=>{
-		expect(await vlc.meta()).to.not.be.null
-			.and.not.be.undefined
-			.and.to.include.keys()
+		const meta = await vlc.meta();
+		expect(meta).to.not.be.null
+			.and.not.be.undefined;
+
+		expect(meta).to.haveOwnProperty("filename");
 	})
 
 	it("should know playback state",async ()=>{
