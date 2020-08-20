@@ -273,7 +273,6 @@ export default class Client{
 		return tracks;
 	}
 
-	//todo get album art
 	/**
 	 * Returns an array with all the available aspect ratios
 	 */

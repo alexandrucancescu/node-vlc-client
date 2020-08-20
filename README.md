@@ -112,6 +112,21 @@ To get the id see [**.getPlaylist()**](#getplaylist--playlistentry).
 Play an entry from playlist by id.  
 To get the id see [**.getPlaylist()**](#getplaylist--playlistentry).
 
+### .addToPlaylist(uri: string)
+Add a file to playlist using an URI.
+Can be file, http, rtsp, etc. Anything 
+VLC supports.
+
+### .playFile(uri: string, options)
+Play a file by specifing URI. Adds a
+file to the playlist and plays it imediately.
+
+**options**:
+- **noaudio**: boolean
+- **novideo**: boolean
+
+The options object is optional
+
 ### .jumpForward(seconds: number)
 Seek playback forward by given seconds
 
@@ -199,6 +214,23 @@ Returns the current chapter of a video that is playing.
 Returns **synchronous** an array of all the available aspect ratios
 as string array.
 
+### .isLooping() => boolean
+Return true if VLC's loop function is activated
+
+### .isRandom() => boolean
+Return true if items in playlist are played in random order. Random is same as shuffle.
+
+### .isRepeating() => boolean
+Return true if repeat is on.
+
+### .getPlaybackRate() => number
+Playback rate. Normal speed is 1. Range 0.25 - 4.
+
+### .getAlbumArt(playlistEntryId?: number) => [AlbumArtResult](#albumartresult)
+Returns the album art of an item in the playlist.  
+If **playlistEntryId** is not specified, returns the album art of the current item that is playing.  
+Returns **null** if the media has no album art.
+
 ## Setters
 
 ### .setTime(time: number)
@@ -221,6 +253,39 @@ Set if VLC should be fullscreen
 Set the aspect ratio of video.
 To get a list of available aspect ratios
 use **.availableAspectRations()**.
+
+### .setRepeating(shouldRepeat: boolean)
+Set if playlist entries should be repeated.
+
+### .setLooping(shouldLoop: boolean)
+Set if VLC's looping function should be activated
+
+### .setRandom(random: boolean)
+Set if playlist entries should be played in random order
+
+### .setPlaybackRate(rate: number)
+Playback rate. Normal speed is 1. Range 0.25 - 4
+
+### .setSubtitleDelay(delay: number)
+Set a delay in seconds, can have decimals, of
+the subtitle track from video track.
+
+### .setAudioDelay(delay: number)
+Set a delay in seconds, can have decimals, of
+the audio track from video track.
+
+### .setChapter(chapter: number)
+Set the chapter of the movie playing.  
+See [.getChapters](#getchapters)
+
+### .setAudioTrack(trackId: number)
+Select the audio track. Get the audio tracks id from [.getTracks()](#gettracks) or [.getAudioTracks](#getaudiotracks).
+
+### .setSubtitleTrack(trackId: number)
+Select the sub track. Get the sub tracks id from [.getTracks()](#gettracks) or [.getSubtitleTracks](#getsubtitletracks).
+
+### .setVideoTrack(trackId: number)
+Select the video track. Get the video track id from [.getTracks()](#gettracks) or [.getVideoTracks](#getvideotracks).
 
 ## Types
 
@@ -277,6 +342,15 @@ interface SubtitleTrack {
     Type: "Audio" | "Video" | "Subtitle",
     Language?: string,
     Codec?: string,
+}
+```
+
+### AlbumArtResult
+
+```typescript
+AlbumArtResult {
+	contentType: string, // image/jpeg , image/png , etc
+	buffer: Buffer, // album art image as buffer
 }
 ```
 
