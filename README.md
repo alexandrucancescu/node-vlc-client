@@ -106,7 +106,7 @@ Removes all entries from the playlist
 
 ### .removeFromPlaylist(id: number)
 Removes the item with the given id from palylist.  
-To get the id see [**.getPlaylist()**](##getplaylist--playlistentry).
+To get the id see [**.getPlaylist()**](#getplaylist--playlistentry).
 
 ### .playFromPlaylist(entryId: number)
 Play an entry from playlist by id.  
