@@ -1,4 +1,4 @@
-import { AspectRatio, AudioTrack, ClientOptions, PlaylistEntry, SubtitleTrack, Tracks, VideoTrack, VlcStatus } from "./Types";
+import { AlbumArtResult, AspectRatio, AudioTrack, ClientOptions, PlaylistEntry, SubtitleTrack, Tracks, VideoTrack, VlcStatus } from "./Types";
 export default class Client {
     private readonly options;
     constructor(options: ClientOptions);
@@ -11,6 +11,11 @@ export default class Client {
     emptyPlaylist(): Promise<void>;
     removeFromPlaylist(id: number): Promise<void>;
     playFromPlaylist(entryId: number): Promise<void>;
+    addToPlaylist(uri: string): Promise<void>;
+    playFile(uri: string, options?: {
+        noaudio: boolean;
+        novideo: boolean;
+    }): Promise<void>;
     jumpForward(seconds: number): Promise<void>;
     jumpBackwards(seconds: number): Promise<void>;
     toggleFullscreen(): Promise<void>;
@@ -75,6 +80,14 @@ export default class Client {
     getVideoTracks(): Promise<VideoTrack[]>;
     getChapters(): Promise<number[]>;
     getCurrentChapter(): Promise<number>;
+    isLooping(): Promise<boolean>;
+    isRandom(): Promise<boolean>;
+    isRepeating(): Promise<boolean>;
+    /**
+     * Playback rate. Normal speed is 1. Range 0.25 - 4
+     */
+    getPlaybackRate(): Promise<number>;
+    getAlbumArt(playlistEntryId?: number): Promise<AlbumArtResult>;
     /**
      * Get all tracks (video,audio,subs)
      */
@@ -104,9 +117,27 @@ export default class Client {
     setVolumeRaw(volume: number): Promise<void>;
     setFullscreen(val: boolean): Promise<void>;
     setAspectRation(ar: AspectRatio): Promise<void>;
+    setRepeating(shouldRepeat: boolean): Promise<void>;
+    setLooping(shouldLoop: boolean): Promise<void>;
+    setRandom(random: boolean): Promise<void>;
+    /**
+     * Playback rate. Normal speed is 1. Range 0.25 - 4
+     */
+    setPlaybackRate(rate: number): Promise<void>;
+    setSubtitleDelay(delay: number): Promise<void>;
+    setAudioDelay(delay: number): Promise<void>;
+    setChapter(chapter: number): Promise<void>;
+    /**
+     * Select the audio track. Get the audio track id from .streams()
+     */
+    setAudioTrack(trackId: number): Promise<void>;
+    r: any;
+    setSubtitleTrack(trackId: number): Promise<void>;
+    setVideoTrack(trackId: number): Promise<void>;
     private sendCommand;
     private makeRequest;
     private requestPlaylist;
+    private requestAlbumArt;
     private log;
     private error;
     private static parsePlaylistEntries;

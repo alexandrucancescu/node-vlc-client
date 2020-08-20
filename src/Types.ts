@@ -17,7 +17,7 @@ export interface VlcStatus {
 	time: number,
 	volume: number,
 	length: number,
-	random: number,
+	random: boolean,
 	// audiofilters: { filter_0: '' },
 	// videoeffects: { hue: 0, saturation: 1, contrast: 1, brightness: 1, gamma: 1 },
 	rate: number,
@@ -100,3 +100,8 @@ export interface AudioTrack extends Track{
 }
 
 export interface SubtitleTrack extends Track{}
+
+export interface AlbumArtResult {
+	contentType: string,
+	buffer: Buffer,
+}

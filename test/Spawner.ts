@@ -5,20 +5,24 @@ import {createWriteStream} from "fs";
 import * as path from "path";
 
 let cmd;
+let intf;
 
 switch (platform()) {
 	case "darwin":
 		cmd = "/Applications/VLC.app/Contents/MacOS/VLC";
+		intf = "macosx";
 		break;
 	case "linux":
 		cmd = "/usr/bin/vlc";
+		intf = "qt"
 		break;
 	default:
 		throw new Error(`Platform '${platform()}' is not supported for testing`);
 }
 
 const args = [
-	"-I", "http",
+	"-I", intf,
+	"--extraintf", "http",
 	"--http-port", "8080",
 	"--http-host", "localhost",
 	"--http-password","1234",
@@ -30,12 +34,15 @@ export async function spawnVlc(): Promise<ChildProcess> {
 		stdio: "pipe"
 	});
 
-	if(isCi){
-		const output = createWriteStream(path.join(__dirname,"vlc.log"));
+	if(isCi||true){
+		const output = createWriteStream(path.join(__dirname,"../vlc.log"));
 		vlcProcess.stderr.pipe(output);
+		vlcProcess.stdout.pipe(output);
 		vlcProcess.on("exit",()=>{
 			output.close();
 		})
+
+		console.log([vlcProcess.spawnfile,...vlcProcess.spawnargs].join(" "));
 	}
 
 	return new Promise<ChildProcess>((res,rej)=>{
@@ -48,7 +55,9 @@ export async function spawnVlc(): Promise<ChildProcess> {
 				rej(error);
 				vlcProcess.kill();
 			}else{
-				res(vlcProcess);
+				setTimeout(()=>{
+					res(vlcProcess);
+				},2000);
 			}
 		}
 

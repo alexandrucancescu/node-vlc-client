@@ -1,3 +1,4 @@
+/// <reference types="node" />
 export interface ClientOptions {
     ip: string;
     port: number;
@@ -14,7 +15,7 @@ export interface VlcStatus {
     time: number;
     volume: number;
     length: number;
-    random: number;
+    random: boolean;
     rate: number;
     state: string;
     loop: boolean;
@@ -84,4 +85,8 @@ export interface AudioTrack extends Track {
     Sample_rate: string;
 }
 export interface SubtitleTrack extends Track {
+}
+export interface AlbumArtResult {
+    contentType: string;
+    buffer: Buffer;
 }

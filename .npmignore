@@ -7,3 +7,4 @@ src
 .travis.yml
 tsconfig.json
 test
+vlc.log

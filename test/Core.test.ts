@@ -1,9 +1,10 @@
 import {expect} from "chai"
-import {describe, after, before} from "mocha"
+import {after, before, describe} from "mocha"
 import {spawnVlc} from "./Spawner";
 import {ChildProcess} from "child_process";
 import {Client} from "../src";
 import * as isCi from "is-ci";
+import {AspectRatio} from "../src/Types";
 
 let vlcProcess: ChildProcess;
 let vlc: Client;
@@ -11,6 +12,7 @@ let vlc: Client;
 before(async ()=>{
 	if(!isCi){
 		vlcProcess =await spawnVlc();
+		console.log("spawned");
 	}else{
 		console.log("IS CI!");
 	}
@@ -69,7 +71,11 @@ describe("CORE FUNCTIONALITIES",()=>{
 		expect(await vlc.getVolume()).to.equal(100);
 	})
 
-	it("should retrieve aspect ratio", async ()=>{
-		console.log("aspect ratio",await vlc.getAspectRatio());
+	it("should retrieve and set aspect ratio", async ()=>{
+		expect(await vlc.getAspectRatio()).to.not.be.null
+			.and.not.be.undefined
+
+		await vlc.setAspectRation(AspectRatio._4_3);
+		expect(await vlc.getAspectRatio()).to.equal(AspectRatio._4_3);
 	});
 });

@@ -64,6 +64,21 @@ class Client {
             });
         });
     }
+    addToPlaylist(uri) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("in_enqueue", {
+                input: uri,
+            });
+        });
+    }
+    playFile(uri, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("in_play", {
+                input: uri,
+                options
+            });
+        });
+    }
     jumpForward(seconds) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.sendCommand("seek", {
@@ -238,6 +253,34 @@ class Client {
             return (yield this.status()).information.chapter;
         });
     }
+    isLooping() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.status()).loop;
+        });
+    }
+    isRandom() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.status()).random;
+        });
+    }
+    isRepeating() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.status()).repeat;
+        });
+    }
+    /**
+     * Playback rate. Normal speed is 1. Range 0.25 - 4
+     */
+    getPlaybackRate() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.status()).rate;
+        });
+    }
+    getAlbumArt(playlistEntryId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.requestAlbumArt(playlistEntryId);
+        });
+    }
     /**
      * Get all tracks (video,audio,subs)
      */
@@ -343,6 +386,68 @@ class Client {
             });
         });
     }
+    setRepeating(shouldRepeat) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if ((yield this.isRepeating()) !== shouldRepeat) {
+                yield this.sendCommand("pl_repeat");
+            }
+        });
+    }
+    setLooping(shouldLoop) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if ((yield this.isLooping()) !== shouldLoop) {
+                yield this.sendCommand("pl_loop");
+            }
+        });
+    }
+    setRandom(random) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if ((yield this.isRandom()) !== random) {
+                yield this.sendCommand("pl_random");
+            }
+        });
+    }
+    /**
+     * Playback rate. Normal speed is 1. Range 0.25 - 4
+     */
+    setPlaybackRate(rate) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("rate", { val: rate });
+        });
+    }
+    setSubtitleDelay(delay) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("subdelay", { val: delay });
+        });
+    }
+    setAudioDelay(delay) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("audiodelay", { val: delay });
+        });
+    }
+    setChapter(chapter) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("chapter", { val: chapter });
+        });
+    }
+    /**
+     * Select the audio track. Get the audio track id from .streams()
+     */
+    setAudioTrack(trackId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("audio_track", { val: trackId });
+        });
+    }
+    setSubtitleTrack(trackId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("subtitle_track", { val: trackId });
+        });
+    }
+    setVideoTrack(trackId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sendCommand("video_track", { val: trackId });
+        });
+    }
     //endregion
     //region REQUESTS
     sendCommand(command, params) {
@@ -368,7 +473,6 @@ class Client {
                 url,
                 method: "GET",
                 headers,
-                data,
             });
             this.log(response.url, response.statusMessage, response.statusCode);
             if (response.complete && response.statusCode === 200) {
@@ -395,6 +499,39 @@ class Client {
             this.log(response.url, response.statusMessage, response.statusCode);
             if (response.complete && response.statusCode === 200) {
                 return Client.parsePlaylistEntries(response.body);
+            }
+            else {
+                throw new Error(`Request error | Code ${response.statusCode} | Message ${response.statusMessage}`);
+            }
+        });
+    }
+    requestAlbumArt(playlistEntryId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const auth = `${this.options.username}:${this.options.password}`;
+            const headers = {
+                "Authorization": `Basic ${Buffer.from(auth).toString("base64")}`,
+            };
+            let url = `http://${this.options.ip}:${this.options.port}/art`;
+            if (playlistEntryId) {
+                headers["Content-Type"] = "application/x-www-form-urlencoded";
+                url += `?${querystring_1.stringify({ item: playlistEntryId })}`;
+            }
+            this.log(url);
+            const response = yield phin({
+                url,
+                method: "GET",
+                headers,
+            });
+            this.log(response.url, response.statusMessage, response.statusCode);
+            console.log(response.headers);
+            if (response.complete && response.statusCode === 200) {
+                return {
+                    contentType: (response.headers["Content-Type"] || response.headers["content-type"]),
+                    buffer: response.body
+                };
+            }
+            else if (response.statusCode === 404) {
+                return null;
             }
             else {
                 throw new Error(`Request error | Code ${response.statusCode} | Message ${response.statusMessage}`);

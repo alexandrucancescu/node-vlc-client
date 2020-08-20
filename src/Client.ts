@@ -1,4 +1,5 @@
 import {
+	AlbumArtResult,
 	AspectRatio,
 	AudioTrack,
 	ClientOptions,
@@ -9,7 +10,7 @@ import {
 	VlcStatus,
 } from "./Types";
 import * as phin from "phin"
-import {stringify as encodeQuery, unescape} from "querystring"
+import {stringify as encodeQuery, unescape, escape} from "querystring"
 
 export default class Client{
 	private readonly options: ClientOptions;
@@ -54,6 +55,19 @@ export default class Client{
 	public async playFromPlaylist(entryId: number){
 		await this.sendCommand("pl_play",{
 			id: entryId
+		})
+	}
+
+	public async addToPlaylist(uri: string){
+		await this.sendCommand("in_enqueue",{
+			input: uri,
+		})
+	}
+
+	public async playFile(uri: string, options?: {noaudio: boolean, novideo: boolean}){
+		await this.sendCommand("in_play",{
+			input: uri,
+			options
 		})
 	}
 
@@ -207,6 +221,29 @@ export default class Client{
 		return (await this.status()).information.chapter;
 	}
 
+	public async isLooping():Promise<boolean>{
+		return (await this.status()).loop;
+	}
+
+	public async isRandom():Promise<boolean>{
+		return (await this.status()).random;
+	}
+
+	public async isRepeating():Promise<boolean>{
+		return (await this.status()).repeat;
+	}
+
+	/**
+	 * Playback rate. Normal speed is 1. Range 0.25 - 4
+	 */
+	public async getPlaybackRate():Promise<number>{
+		return (await this.status()).rate;
+	}
+
+	public async getAlbumArt(playlistEntryId?: number): Promise<AlbumArtResult>{
+		return await this.requestAlbumArt(playlistEntryId);
+	}
+
 	/**
 	 * Get all tracks (video,audio,subs)
 	 */
@@ -304,6 +341,58 @@ export default class Client{
 		});
 	}
 
+	public async setRepeating(shouldRepeat: boolean){
+		if(await this.isRepeating() !== shouldRepeat){
+			await this.sendCommand("pl_repeat");
+		}
+	}
+
+	public async setLooping(shouldLoop: boolean){
+		if(await this.isLooping() !== shouldLoop){
+			await this.sendCommand("pl_loop");
+		}
+	}
+
+	public async setRandom(random: boolean){
+		if(await this.isRandom() !== random){
+			await this.sendCommand("pl_random");
+		}
+	}
+
+	/**
+	 * Playback rate. Normal speed is 1. Range 0.25 - 4
+	 */
+	public async setPlaybackRate(rate: number){
+		await this.sendCommand("rate",{val: rate});
+	}
+
+	public async setSubtitleDelay(delay: number){
+		await this.sendCommand("subdelay",{val: delay});
+	}
+
+	public async setAudioDelay(delay: number){
+		await this.sendCommand("audiodelay",{val: delay});
+	}
+
+	public async setChapter(chapter: number){
+		await this.sendCommand("chapter",{val: chapter});
+	}
+
+	/**
+	 * Select the audio track. Get the audio track id from .streams()
+	 */
+	public async setAudioTrack(trackId: number){
+		await this.sendCommand("audio_track",{val: trackId});
+	}
+r
+	public async setSubtitleTrack(trackId: number){
+		await this.sendCommand("subtitle_track",{val: trackId});
+	}
+
+	public async setVideoTrack(trackId: number){
+		await this.sendCommand("video_track",{val: trackId});
+	}
+
 	//endregion
 
 	//region REQUESTS
@@ -337,7 +426,6 @@ export default class Client{
 			url,
 			method: "GET",
 			headers,
-			data,
 		});
 
 		this.log(response.url,response.statusMessage,response.statusCode);
@@ -370,6 +458,43 @@ export default class Client{
 
 		if(response.complete && response.statusCode === 200){
 			return Client.parsePlaylistEntries(response.body as unknown as Buffer);
+		}else{
+			throw new Error(`Request error | Code ${response.statusCode} | Message ${response.statusMessage}`);
+		}
+	}
+
+	private async requestAlbumArt(playlistEntryId: number):Promise<AlbumArtResult> {
+		const auth = `${this.options.username}:${this.options.password}`;
+
+		const headers = {
+			"Authorization": `Basic ${Buffer.from(auth).toString("base64")}`,
+		}
+
+		let url = `http://${this.options.ip}:${this.options.port}/art`;
+
+		if (playlistEntryId) {
+			headers["Content-Type"] = "application/x-www-form-urlencoded";
+			url += `?${encodeQuery({item: playlistEntryId})}`;
+		}
+
+		this.log(url);
+
+		const response = await phin({
+			url,
+			method: "GET",
+			headers,
+		});
+
+		this.log(response.url, response.statusMessage, response.statusCode);
+
+		console.log(response.headers);
+		if (response.complete && response.statusCode === 200) {
+			return {
+				contentType: (response.headers["Content-Type"] || response.headers["content-type"]) as string,
+				buffer: response.body as unknown as Buffer
+			};
+		}else if(response.statusCode === 404){
+			return null;
 		}else{
 			throw new Error(`Request error | Code ${response.statusCode} | Message ${response.statusMessage}`);
 		}

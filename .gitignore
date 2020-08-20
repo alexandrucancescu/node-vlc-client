@@ -4,6 +4,7 @@ dist/Test.*
 .idea
 dist/src
 dist/test
+vlc.log
 
 ### GENERATED ###
 

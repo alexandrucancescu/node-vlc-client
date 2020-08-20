@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AspectRatio = void 0;
 var AspectRatio;
 (function (AspectRatio) {
     AspectRatio["_1_1"] = "1:1";
