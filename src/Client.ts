@@ -2,7 +2,7 @@ import {
 	AlbumArtResult,
 	AspectRatio,
 	AudioTrack,
-	ClientOptions,
+	ClientOptions, PlayFileOptions,
 	PlaylistEntry,
 	SubtitleTrack, Track,
 	Tracks,
@@ -10,7 +10,9 @@ import {
 	VlcStatus,
 } from "./Types";
 import * as phin from "phin"
-import {stringify as encodeQuery, unescape, escape} from "querystring"
+import {stringify as encodeQuery, unescape} from "querystring"
+import {basename} from "path"
+
 
 export default class Client{
 	private readonly options: ClientOptions;
@@ -64,11 +66,34 @@ export default class Client{
 		})
 	}
 
-	public async playFile(uri: string, options?: {noaudio: boolean, novideo: boolean}){
-		await this.sendCommand("in_play",{
-			input: uri,
-			options
-		})
+	public async playFile(uri: string, options?: PlayFileOptions){
+		const params: any = {
+			input: uri
+		}
+		if(options?.noaudio){
+			params.noaudio = options.noaudio;
+		}
+		if(options?.novideo){
+			params.novideo = options.novideo;
+		}
+		await this.sendCommand("in_play",params);
+		if(options?.wait){
+			const startTime = Date.now();
+			const timeout = options?.timeout ?? 3000;
+			const fileName = basename(uri);
+			return new Promise(res=>{
+				let interval = setInterval(async ()=>{
+					if(Date.now() - startTime > timeout){
+						clearInterval(interval);
+						res();
+					}
+					if((await this.getFileName()) === fileName){
+						clearInterval(interval);
+						res();
+					}
+				},250);
+			});
+		}
 	}
 
 	public async jumpForward(seconds: number){

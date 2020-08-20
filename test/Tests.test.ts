@@ -1,6 +1,6 @@
 import {expect} from "chai"
 import {after, before, describe} from "mocha"
-import {downloadTestFiles, spawnVlc, TestFiles} from "./Spawner";
+import {downloadTestFiles, removeTestFiles, spawnVlc, TestFiles} from "./Spawner";
 import {ChildProcess} from "child_process";
 import {Client} from "../src";
 import * as isCi from "is-ci";
@@ -23,7 +23,7 @@ before(async ()=>{
 });
 
 after(async ()=>{
-	// await removeTestFiles();
+	await removeTestFiles();
 	if(!isCi){
 		vlcProcess.kill();
 	}
@@ -68,7 +68,7 @@ describe("CORE FUNCTIONALITIES",()=>{
 			.and.not.be.undefined;
 
 		expect(meta).to.haveOwnProperty("filename");
-	})
+	});
 
 	it("should know playback state",async ()=>{
 		expect(await vlc.getPlaybackState()).to.equal("playing");

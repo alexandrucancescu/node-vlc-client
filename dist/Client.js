@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Types_1 = require("./Types");
 const phin = require("phin");
 const querystring_1 = require("querystring");
+const path_1 = require("path");
 class Client {
     constructor(options) {
         this.options = Client.validateOptions(options);
@@ -72,11 +73,35 @@ class Client {
         });
     }
     playFile(uri, options) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.sendCommand("in_play", {
-                input: uri,
-                options
-            });
+            const params = {
+                input: uri
+            };
+            if (options === null || options === void 0 ? void 0 : options.noaudio) {
+                params.noaudio = options.noaudio;
+            }
+            if (options === null || options === void 0 ? void 0 : options.novideo) {
+                params.novideo = options.novideo;
+            }
+            yield this.sendCommand("in_play", params);
+            if (options === null || options === void 0 ? void 0 : options.wait) {
+                const startTime = Date.now();
+                const timeout = (_a = options === null || options === void 0 ? void 0 : options.timeout) !== null && _a !== void 0 ? _a : 3000;
+                const fileName = path_1.basename(uri);
+                return new Promise(res => {
+                    let interval = setInterval(() => __awaiter(this, void 0, void 0, function* () {
+                        if (Date.now() - startTime > timeout) {
+                            clearInterval(interval);
+                            res();
+                        }
+                        if ((yield this.getFileName()) === fileName) {
+                            clearInterval(interval);
+                            res();
+                        }
+                    }), 250);
+                });
+            }
         });
     }
     jumpForward(seconds) {

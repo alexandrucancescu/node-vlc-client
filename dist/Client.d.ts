@@ -1,4 +1,4 @@
-import { AlbumArtResult, AspectRatio, AudioTrack, ClientOptions, PlaylistEntry, SubtitleTrack, Tracks, VideoTrack, VlcMeta, VlcStatus } from "./Types";
+import { AlbumArtResult, AspectRatio, AudioTrack, ClientOptions, PlayFileOptions, PlaylistEntry, SubtitleTrack, Tracks, VideoTrack, VlcMeta, VlcStatus } from "./Types";
 export default class Client {
     private readonly options;
     constructor(options: ClientOptions);
@@ -12,10 +12,7 @@ export default class Client {
     removeFromPlaylist(id: number): Promise<void>;
     playFromPlaylist(entryId: number): Promise<void>;
     addToPlaylist(uri: string): Promise<void>;
-    playFile(uri: string, options?: {
-        noaudio: boolean;
-        novideo: boolean;
-    }): Promise<void>;
+    playFile(uri: string, options?: PlayFileOptions): Promise<unknown>;
     jumpForward(seconds: number): Promise<void>;
     jumpBackwards(seconds: number): Promise<void>;
     toggleFullscreen(): Promise<void>;

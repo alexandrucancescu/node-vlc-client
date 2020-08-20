@@ -16,6 +16,7 @@ of VLC's functions that can be controlled with the HTTP interface
 - [x] Playlist manipulation (add, remove, next, prev)
 - [x] Get and set audio, subtitle delay
 - [x] Add/Change video, audio, subs streams
+- [ ] Browse for files
 - [ ] Auto polling for changes
 - [ ] Audio eq, effects
 - [ ] VLC instances discovery on the network

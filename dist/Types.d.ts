@@ -90,3 +90,9 @@ export interface AlbumArtResult {
     contentType: string;
     buffer: Buffer;
 }
+export interface PlayFileOptions {
+    noaudio?: boolean;
+    novideo?: boolean;
+    wait?: boolean;
+    timeout?: number;
+}
