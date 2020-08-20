@@ -130,6 +130,18 @@ class Client {
             return this.requestStatus();
         });
     }
+    meta() {
+        var _a, _b, _c;
+        return __awaiter(this, void 0, void 0, function* () {
+            return (_c = (_b = (_a = (yield this.status())) === null || _a === void 0 ? void 0 : _a.information) === null || _b === void 0 ? void 0 : _b.category) === null || _c === void 0 ? void 0 : _c.meta;
+        });
+    }
+    getFileName() {
+        var _a, _b, _c, _d;
+        return __awaiter(this, void 0, void 0, function* () {
+            return (_d = (_c = (_b = (_a = (yield this.status())) === null || _a === void 0 ? void 0 : _a.information) === null || _b === void 0 ? void 0 : _b.category) === null || _c === void 0 ? void 0 : _c.meta) === null || _d === void 0 ? void 0 : _d.filename;
+        });
+    }
     isPlaying() {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.getPlaybackState()) === "playing";

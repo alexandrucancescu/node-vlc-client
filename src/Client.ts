@@ -6,7 +6,7 @@ import {
 	PlaylistEntry,
 	SubtitleTrack, Track,
 	Tracks,
-	VideoTrack,
+	VideoTrack, VlcMeta,
 	VlcStatus,
 } from "./Types";
 import * as phin from "phin"
@@ -115,6 +115,14 @@ export default class Client{
 	 */
 	public async status():Promise<VlcStatus>{
 		return this.requestStatus();
+	}
+
+	public async meta():Promise<VlcMeta> {
+		return (await this.status())?.information?.category?.meta;
+	}
+
+	public async getFileName():Promise<string>{
+		return (await this.status())?.information?.category?.meta?.filename;
 	}
 
 	public async isPlaying():Promise<boolean>{

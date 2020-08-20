@@ -147,6 +147,12 @@ Decrease the volume by given int, range 0-100
 ### .status() => VlcStatus
 Returns an object with all the info that VLC provides except playlist info
 
+### .meta() => [VlcMeta](#vlcmeta)
+Returns an object with various informations about the current media playing.
+
+### .getFileName() => string
+Returns the file name of the current media playing
+
 ### .isPlaying()
 Returns true/false if is playing
 
@@ -276,16 +282,16 @@ the audio track from video track.
 
 ### .setChapter(chapter: number)
 Set the chapter of the movie playing.  
-See [.getChapters](#getchapters)
+See [.getChapters](#getchapters--number)
 
 ### .setAudioTrack(trackId: number)
-Select the audio track. Get the audio tracks id from [.getTracks()](#gettracks) or [.getAudioTracks](#getaudiotracks).
+Select the audio track. Get the audio tracks id from [.getTracks()](#gettracks--tracks) or [.getAudioTracks](#getaudiotracks--audiotrack).
 
 ### .setSubtitleTrack(trackId: number)
-Select the sub track. Get the sub tracks id from [.getTracks()](#gettracks) or [.getSubtitleTracks](#getsubtitletracks).
+Select the sub track. Get the sub tracks id from [.getTracks()](#gettracks--tracks) or [.getSubtitleTracks](#getsubtitletracks--subtitletrack).
 
 ### .setVideoTrack(trackId: number)
-Select the video track. Get the video track id from [.getTracks()](#gettracks) or [.getVideoTracks](#getvideotracks).
+Select the video track. Get the video track id from [.getTracks()](#gettracks--tracks) or [.getVideoTracks](#getvideotracks--videotrack).
 
 ## Types
 

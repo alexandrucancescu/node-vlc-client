@@ -1,4 +1,4 @@
-import { AlbumArtResult, AspectRatio, AudioTrack, ClientOptions, PlaylistEntry, SubtitleTrack, Tracks, VideoTrack, VlcStatus } from "./Types";
+import { AlbumArtResult, AspectRatio, AudioTrack, ClientOptions, PlaylistEntry, SubtitleTrack, Tracks, VideoTrack, VlcMeta, VlcStatus } from "./Types";
 export default class Client {
     private readonly options;
     constructor(options: ClientOptions);
@@ -33,6 +33,8 @@ export default class Client {
      * Returns an object with all the info that VLC provides except playlist info
      */
     status(): Promise<VlcStatus>;
+    meta(): Promise<VlcMeta>;
+    getFileName(): Promise<string>;
     isPlaying(): Promise<boolean>;
     isPaused(): Promise<boolean>;
     isStopped(): Promise<boolean>;
