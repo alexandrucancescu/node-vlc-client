@@ -114,7 +114,7 @@ export default class Client{
 	 * Returns an object with all the info that VLC provides except playlist info
 	 */
 	public async status():Promise<VlcStatus>{
-		return this.makeRequest();
+		return this.requestStatus();
 	}
 
 	public async isPlaying():Promise<boolean>{
@@ -384,7 +384,7 @@ export default class Client{
 	public async setAudioTrack(trackId: number){
 		await this.sendCommand("audio_track",{val: trackId});
 	}
-r
+
 	public async setSubtitleTrack(trackId: number){
 		await this.sendCommand("subtitle_track",{val: trackId});
 	}
@@ -397,84 +397,50 @@ r
 
 	//region REQUESTS
 	private async sendCommand(command: string,params?: any){
-		return this.makeRequest({
+		return this.requestStatus({
 			command,
 			...params
 		})
 	}
 
-	private async makeRequest(data?: any):Promise<VlcStatus>{
-		const auth = `${this.options.username}:${this.options.password}`;
-
-		const headers = {
-			"Authorization": `Basic ${Buffer.from(auth).toString("base64")}`,
-		}
-
-		if(data){
-			headers["Content-Type"] = "application/x-www-form-urlencoded";
-		}
-
-		let url = `http://${this.options.ip}:${this.options.port}/requests/status.json`;
-
-		if(data){
-			url += `?${encodeQuery(data)}`;
-		}
-
-		this.log(url);
-
-		const response = await phin({
-			url,
-			method: "GET",
-			headers,
-		});
-
-		this.log(response.url,response.statusMessage,response.statusCode);
-
-		if(response.complete && response.statusCode === 200){
-			return JSON.parse(response.body.toString());
-		}else{
-			throw new Error(`Request error | Code ${response.statusCode} | Message ${response.statusMessage}`);
-		}
+	private async requestStatus(data?: any):Promise<VlcStatus>{
+		let response = await this.request("/requests/status.json",data);
+		return JSON.parse(response.body.toString());
 	}
 
 	private async requestPlaylist():Promise<PlaylistEntry[]>{
-		const auth = `${this.options.username}:${this.options.password}`;
-
-		const headers = {
-			"Authorization": `Basic ${Buffer.from(auth).toString("base64")}`,
-		}
-
-		let url = `http://${this.options.ip}:${this.options.port}/requests/playlist.json`;
-
-		this.log(url);
-
-		const response = await phin({
-			url,
-			method: "GET",
-			headers,
-		});
-
-		this.log(response.url,response.statusMessage,response.statusCode);
-
-		if(response.complete && response.statusCode === 200){
-			return Client.parsePlaylistEntries(response.body as unknown as Buffer);
-		}else{
-			throw new Error(`Request error | Code ${response.statusCode} | Message ${response.statusMessage}`);
-		}
+		const response = await this.request("/requests/playlist.json");
+		return Client.parsePlaylistEntries(response.body as unknown as Buffer);
 	}
 
 	private async requestAlbumArt(playlistEntryId: number):Promise<AlbumArtResult> {
+		let query;
+		if(playlistEntryId){
+			query = {
+				item: playlistEntryId
+			}
+		}
+
+		const response = await this.request("/art", query);
+
+		return {
+			contentType: (response.headers["Content-Type"] || response.headers["content-type"]) as string,
+			buffer: response.body as unknown as Buffer
+		};
+	}
+
+	private async request(urlPath: string, query?: any): Promise<phin.IResponse> {
 		const auth = `${this.options.username}:${this.options.password}`;
 
 		const headers = {
 			"Authorization": `Basic ${Buffer.from(auth).toString("base64")}`,
 		}
 
-		let url = `http://${this.options.ip}:${this.options.port}/art`;
+		let url = `http://${this.options.ip}:${this.options.port}${urlPath}`;
 
-		if (playlistEntryId) {
+		if(query){
 			headers["Content-Type"] = "application/x-www-form-urlencoded";
-			url += `?${encodeQuery({item: playlistEntryId})}`;
+			url += `?${encodeQuery(query)}`;
 		}
 
 		this.log(url);
@@ -485,16 +451,8 @@ r
 			headers,
 		});
 
-		this.log(response.url, response.statusMessage, response.statusCode);
-
-		console.log(response.headers);
-		if (response.complete && response.statusCode === 200) {
-			return {
-				contentType: (response.headers["Content-Type"] || response.headers["content-type"]) as string,
-				buffer: response.body as unknown as Buffer
-			};
-		}else if(response.statusCode === 404){
-			return null;
+		if(response.complete && response.statusCode === 200){
+			return response;
 		}else{
 			throw new Error(`Request error | Code ${response.statusCode} | Message ${response.statusMessage}`);
 		}

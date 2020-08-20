@@ -5,6 +5,7 @@ dist/Test.*
 dist/src
 dist/test
 vlc.log
+test-files
 
 ### GENERATED ###
 

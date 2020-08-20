@@ -127,7 +127,7 @@ class Client {
      */
     status() {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.makeRequest();
+            return this.requestStatus();
         });
     }
     isPlaying() {
@@ -452,69 +452,46 @@ class Client {
     //region REQUESTS
     sendCommand(command, params) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.makeRequest(Object.assign({ command }, params));
+            return this.requestStatus(Object.assign({ command }, params));
         });
     }
-    makeRequest(data) {
+    requestStatus(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const auth = `${this.options.username}:${this.options.password}`;
-            const headers = {
-                "Authorization": `Basic ${Buffer.from(auth).toString("base64")}`,
-            };
-            if (data) {
-                headers["Content-Type"] = "application/x-www-form-urlencoded";
-            }
-            let url = `http://${this.options.ip}:${this.options.port}/requests/status.json`;
-            if (data) {
-                url += `?${querystring_1.stringify(data)}`;
-            }
-            this.log(url);
-            const response = yield phin({
-                url,
-                method: "GET",
-                headers,
-            });
-            this.log(response.url, response.statusMessage, response.statusCode);
-            if (response.complete && response.statusCode === 200) {
-                return JSON.parse(response.body.toString());
-            }
-            else {
-                throw new Error(`Request error | Code ${response.statusCode} | Message ${response.statusMessage}`);
-            }
+            let response = yield this.request("/requests/status.json", data);
+            return JSON.parse(response.body.toString());
         });
     }
     requestPlaylist() {
         return __awaiter(this, void 0, void 0, function* () {
-            const auth = `${this.options.username}:${this.options.password}`;
-            const headers = {
-                "Authorization": `Basic ${Buffer.from(auth).toString("base64")}`,
-            };
-            let url = `http://${this.options.ip}:${this.options.port}/requests/playlist.json`;
-            this.log(url);
-            const response = yield phin({
-                url,
-                method: "GET",
-                headers,
-            });
-            this.log(response.url, response.statusMessage, response.statusCode);
-            if (response.complete && response.statusCode === 200) {
-                return Client.parsePlaylistEntries(response.body);
-            }
-            else {
-                throw new Error(`Request error | Code ${response.statusCode} | Message ${response.statusMessage}`);
-            }
+            const response = yield this.request("/requests/playlist.json");
+            return Client.parsePlaylistEntries(response.body);
         });
     }
     requestAlbumArt(playlistEntryId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let query;
+            if (playlistEntryId) {
+                query = {
+                    item: playlistEntryId
+                };
+            }
+            const response = yield this.request("/art", query);
+            return {
+                contentType: (response.headers["Content-Type"] || response.headers["content-type"]),
+                buffer: response.body
+            };
+        });
+    }
+    request(urlPath, query) {
         return __awaiter(this, void 0, void 0, function* () {
             const auth = `${this.options.username}:${this.options.password}`;
             const headers = {
                 "Authorization": `Basic ${Buffer.from(auth).toString("base64")}`,
             };
-            let url = `http://${this.options.ip}:${this.options.port}/art`;
-            if (playlistEntryId) {
+            let url = `http://${this.options.ip}:${this.options.port}${urlPath}`;
+            if (query) {
                 headers["Content-Type"] = "application/x-www-form-urlencoded";
-                url += `?${querystring_1.stringify({ item: playlistEntryId })}`;
+                url += `?${querystring_1.stringify(query)}`;
             }
             this.log(url);
             const response = yield phin({
@@ -522,16 +499,8 @@ class Client {
                 method: "GET",
                 headers,
             });
-            this.log(response.url, response.statusMessage, response.statusCode);
-            console.log(response.headers);
             if (response.complete && response.statusCode === 200) {
-                return {
-                    contentType: (response.headers["Content-Type"] || response.headers["content-type"]),
-                    buffer: response.body
-                };
-            }
-            else if (response.statusCode === 404) {
-                return null;
+                return response;
             }
             else {
                 throw new Error(`Request error | Code ${response.statusCode} | Message ${response.statusMessage}`);

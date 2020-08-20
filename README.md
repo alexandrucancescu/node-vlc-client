@@ -60,7 +60,14 @@ await vlc.pause();
 await vlc.setTime(3100);
 ```
 
-## API
+# API
+
+## Contents
+
+- [Actions](#actions)
+- [Getters](#getters)
+- [Setters](#setters)
+- [Types](#types)
 
 ### VLC.Client
 ```typescript
@@ -122,7 +129,7 @@ Decrease the volume by given int, range 0-100
 
 ## Getters
 
-### .status() -> VlcStatus
+### .status() => VlcStatus
 Returns an object with all the info that VLC provides except playlist info
 
 ### .isPlaying()
@@ -162,34 +169,30 @@ Audio delay from video stream in seconds
 ### .getSubtitleDelay()
 Subtitle delay from video stream in seconds
 
-<h3 id="getPlaylist">
-.getPlaylist() -> <a href="#PlaylistEntry">
-        PlaylistEntry[]
-    </a>
-</h3>
+### .getPlaylist() => [PlaylistEntry[]](#playlistentry)
 
 Get the entries in the playlist 
 
 ### .getAspectRatio()
 Returns as string the current aspect ratio
 
-### .getSubtitleTracks() -> [SubtitleTrack[]](#tracks)
+### .getSubtitleTracks() => [SubtitleTrack[]](#tracks)
 Get subtitle tracks.
 
-### .getAudioTracks() -> [AudioTrack[]](#audiotrack)
+### .getAudioTracks() => [AudioTrack[]](#audiotrack)
 Get audio tracks.
 
-### .getVideoTracks() -> [VideoTrack[]](#videotrack)
+### .getVideoTracks() => [VideoTrack[]](#videotrack)
 Get video tracks.
 
-### .getTracks() -> [Tracks](#tracks)
+### .getTracks() => [Tracks](#tracks)
 Get all tracks/streams including video, audio, subtitles.
 
-### .getChapters() -> number[]
+### .getChapters() => number[]
 Returns an array of numbers representing all the chapters
 of a movie. Usually starts at 0.
 
-### .getCurrentChapter() -> number
+### .getCurrentChapter() => number
 Returns the current chapter of a video that is playing.
 
 ### .availableAspectRations(): string[]

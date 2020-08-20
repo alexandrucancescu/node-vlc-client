@@ -131,13 +131,13 @@ export default class Client {
      * Select the audio track. Get the audio track id from .streams()
      */
     setAudioTrack(trackId: number): Promise<void>;
-    r: any;
     setSubtitleTrack(trackId: number): Promise<void>;
     setVideoTrack(trackId: number): Promise<void>;
     private sendCommand;
-    private makeRequest;
+    private requestStatus;
     private requestPlaylist;
     private requestAlbumArt;
+    private request;
     private log;
     private error;
     private static parsePlaylistEntries;

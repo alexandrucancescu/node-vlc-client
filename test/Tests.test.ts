@@ -1,6 +1,6 @@
 import {expect} from "chai"
 import {after, before, describe} from "mocha"
-import {spawnVlc, TestFiles, downloadTestFiles, removeTestFiles} from "./Spawner";
+import {downloadTestFiles, spawnVlc, TestFiles} from "./Spawner";
 import {ChildProcess} from "child_process";
 import {Client} from "../src";
 import * as isCi from "is-ci";
@@ -108,9 +108,37 @@ describe("CORE FUNCTIONALITIES",()=>{
 		expect(result.buffer.byteLength).to.be.greaterThan(0);
 		expect(result.contentType).to.equal("image/jpeg");
 	});
+	
+	it("should get/set loop, random, repeat",async ()=>{
+		await vlc.setRepeating(true);
+		expect(await vlc.isRepeating()).to.be.true;
+
+		await vlc.setLooping(true);
+		expect(await vlc.isLooping()).to.be.true;
+
+		await vlc.setRandom(true);
+		expect(await vlc.isRandom()).to.be.true;
+
+		await vlc.setRepeating(false);
+		expect(await vlc.isRepeating()).to.be.false;
+
+		await vlc.setLooping(false);
+		expect(await vlc.isLooping()).to.be.false;
+
+		await vlc.setRandom(false);
+		expect(await vlc.isRandom()).to.be.false;
+
+		// await vlc.setRepeating(false);
+		// await vlc.setLooping(false);
+		// await vlc.setRandom(false);
+		//
+		// expect(await vlc.isRepeating()).to.be.false;
+		// expect(await vlc.isLooping()).to.be.false;
+		// expect(await vlc.isRandom()).to.be.false;
+		
+	})
 });
 
-
 async function wait(ms: number){
-	return new Promise(res => setTimeout(res,ms));
+	return new Promise(res=>setTimeout(res,ms));
 }
