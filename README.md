@@ -12,10 +12,13 @@ of VLC's functions that can be controlled with the HTTP interface
 ## Features
 
 - [x] Play, Pause, Seek
-- [x] Get and set time, length, volume
+- [x] Get and set time, length, volume, shuffle, repeat, loop
 - [x] Playlist manipulation (add, remove, next, prev)
 - [x] Get and set audio, subtitle delay
+- [x] Change subtitle and audio tracks
 - [x] Add/Change video, audio, subs streams
+- [x] Request album art
+- [x] Lots of helper methods
 - [ ] Browse for files
 - [ ] Auto polling for changes
 - [ ] Audio eq, effects
