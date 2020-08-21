@@ -387,4 +387,4 @@ interface VlcMeta{
 
 ## License
 
-[MIT](LICENCE)
+[MIT](LICENSE)
