@@ -12,6 +12,14 @@ export default class Client {
     removeFromPlaylist(id: number): Promise<void>;
     playFromPlaylist(entryId: number): Promise<void>;
     addToPlaylist(uri: string): Promise<void>;
+    /**
+     * Play a file by specifing URI. Adds a
+     * file to the playlist and plays it imediately.
+     * Only one of the noaudio/novideo options can
+     * be set.
+     * @param options.wait Wait for vlc to open the file
+     * @param options.timeout Time to wait for vlc to open the file
+     */
     playFile(uri: string, options?: PlayFileOptions): Promise<unknown>;
     jumpForward(seconds: number): Promise<void>;
     jumpBackwards(seconds: number): Promise<void>;

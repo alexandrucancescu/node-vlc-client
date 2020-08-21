@@ -72,6 +72,14 @@ class Client {
             });
         });
     }
+    /**
+     * Play a file by specifing URI. Adds a
+     * file to the playlist and plays it imediately.
+     * Only one of the noaudio/novideo options can
+     * be set.
+     * @param options.wait Wait for vlc to open the file
+     * @param options.timeout Time to wait for vlc to open the file
+     */
     playFile(uri, options) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
@@ -79,10 +87,10 @@ class Client {
                 input: uri
             };
             if (options === null || options === void 0 ? void 0 : options.noaudio) {
-                params.noaudio = options.noaudio;
+                params.option = "noaudio";
             }
-            if (options === null || options === void 0 ? void 0 : options.novideo) {
-                params.novideo = options.novideo;
+            else if (options === null || options === void 0 ? void 0 : options.novideo) {
+                params.option = "novideo";
             }
             yield this.sendCommand("in_play", params);
             if (options === null || options === void 0 ? void 0 : options.wait) {
@@ -129,7 +137,7 @@ class Client {
      */
     increaseVolume(increaseBy) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.sendCommand("seek", {
+            yield this.sendCommand("volume", {
                 val: `+${Math.floor(increaseBy * 5.12)}`
             });
         });
@@ -140,7 +148,7 @@ class Client {
      */
     decreaseVolume(decreaseBy) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.sendCommand("seek", {
+            yield this.sendCommand("volume", {
                 val: `-${Math.floor(decreaseBy * 5.12)}`
             });
         });
@@ -224,7 +232,7 @@ class Client {
      */
     getVolume() {
         return __awaiter(this, void 0, void 0, function* () {
-            return ((yield this.status()).volume / 512) * 100;
+            return Math.floor(((yield this.status()).volume / 512) * 100);
         });
     }
     /**

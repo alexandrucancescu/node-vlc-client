@@ -18,12 +18,13 @@ before(async ()=>{
 	vlc = new Client({
 		ip: "localhost",
 		port: 8080,
-		password: "1234"
+		password: "1234",
+		log: isCi !== true,
 	})
 });
 
 after(async ()=>{
-	await removeTestFiles();
+	// await removeTestFiles();
 	if(!isCi){
 		vlcProcess.kill();
 	}
@@ -31,9 +32,7 @@ after(async ()=>{
 
 describe("CORE FUNCTIONALITIES",()=>{
 	it("should open media",async ()=>{
-		await vlc.playFile(testFiles.video[0].path);
-		await wait(1000);
-		await vlc.play();
+		await vlc.playFile(testFiles.video[0].path, {wait: true, timeout: 2000});
 
 		const status = await vlc.status();
 
@@ -88,10 +87,11 @@ describe("CORE FUNCTIONALITIES",()=>{
 		expect(await vlc.isPlaying()).to.be.true;
 	})
 
-	it("should change and retrieve volume",async ()=>{
-		await vlc.setVolumeRaw(512);
-		expect(await vlc.getVolumeRaw()).to.equal(512);
-		expect(await vlc.getVolume()).to.equal(100);
+	it("should toggle play/pause", async ()=>{
+		await vlc.togglePlay();
+		expect(await vlc.isPlaying()).to.be.false;
+		await vlc.togglePlay();
+		expect(await vlc.isPlaying()).to.be.true;
 	})
 
 	it("should retrieve and set aspect ratio", async ()=>{
@@ -102,9 +102,26 @@ describe("CORE FUNCTIONALITIES",()=>{
 		expect(await vlc.getAspectRatio()).to.equal(AspectRatio._4_3);
 	});
 
+	it("should get/set fullscreen", async ()=>{
+		if(!isCi) return;
+
+		const isFullscreen = await vlc.isFullscreen();
+
+		await vlc.toggleFullscreen();
+
+		expect(await vlc.isFullscreen()).to.not.equal(isFullscreen);
+
+		await vlc.setFullscreen(true);
+
+		expect(await vlc.isFullscreen()).to.be.true;
+
+		await vlc.setFullscreen(false);
+
+		expect(await vlc.isFullscreen()).to.be.false;
+	})
+
 	it("should change media",async()=>{
-		await vlc.playFile(testFiles.audio[0].path);
-		await wait(2000);
+		await vlc.playFile(testFiles.audio[0].path, {wait: true, timeout: 2000});
 
 		const status = await vlc.status();
 
@@ -149,6 +166,76 @@ describe("CORE FUNCTIONALITIES",()=>{
 		// expect(await vlc.isRandom()).to.be.false;
 		
 	})
+
+	it("should jump forward", async ()=>{
+		const time = await vlc.getTime();
+
+		await vlc.jumpForward(3);
+
+		const newTime = await vlc.getTime();
+
+		expect(newTime).to.be.above(time+3-0.01);
+	});
+
+	it("should jump backwards", async ()=>{
+		const time = await vlc.getTime();
+
+		await vlc.jumpBackwards(3);
+
+		const newTime = await vlc.getTime();
+
+		expect(newTime).to.be.below(time-3+0.3);
+	});
+
+	it("should change and retrieve volume",async ()=>{
+		await vlc.setVolumeRaw(512);
+		expect(await vlc.getVolumeRaw()).to.equal(512);
+		expect(await vlc.getVolume()).to.equal(100);
+
+		await vlc.setVolumeRaw(256);
+		expect(await vlc.getVolumeRaw()).to.equal(256);
+		expect(await vlc.getVolume()).to.equal(50);
+	})
+
+	it("should increase volume", async ()=>{
+		const vol = await vlc.getVolume();
+
+		await vlc.increaseVolume(10);
+
+		expect(await vlc.getVolume())
+			.to.be.at.least(vol+10-2)
+			.and.at.most(vol+10+2)
+	})
+
+	it("should decrease volume", async ()=>{
+		const vol = await vlc.getVolume();
+
+		await vlc.decreaseVolume(10);
+
+		expect(await vlc.getVolume())
+			.to.be.at.least(vol-10-2)
+			.and.at.most(vol-10+2)
+	})
+
+	it("should change media", async ()=>{
+		await vlc.playFile(testFiles.video[1].path, {wait: true, timeout: 2000});
+
+		expect(await vlc.getFileName()).to.equal(testFiles.video[1].name);
+	});
+
+	it("should get tracks", async ()=>{
+		const tracks = await vlc.getTracks();
+
+		expect(tracks).to.have.keys("video", "audio", "subtitle");
+
+		expect(tracks.subtitle).to.have.length(1);
+		expect(tracks.audio).to.have.length(1);
+		expect(tracks.video).to.have.length(1);
+
+		expect(await vlc.getVideoTracks()).to.have.length(1);
+		expect(await vlc.getAudioTracks()).to.have.length(1);
+		expect(await vlc.getSubtitleTracks()).to.have.length(1);
+	});
 });
 
 async function wait(ms: number){

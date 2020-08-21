@@ -122,10 +122,16 @@ VLC supports.
 ### .playFile(uri: string, options)
 Play a file by specifing URI. Adds a
 file to the playlist and plays it imediately.
+Only one of the noaudio/novideo options can
+be set.
 
 **options**:
-- **noaudio**: boolean
-- **novideo**: boolean
+- **noaudio**: _boolean_
+- **novideo**: _boolean_
+- **wait**: _boolean_ - If set to true, the promise 
+will only return after vlc opens the file.
+- **timeout**: _number_ - Set the timeout in ms to wait
+for vlc to open the file. **Default** = **3000**
 
 The options object is optional
 

@@ -76,6 +76,10 @@ const TEST_FILES_URLS = [
 	{
 		url: "https://raw.githubusercontent.com/alexandrucancescu/vlc-client-test-files/master/video1.mp4",
 		type: "video"
+	},
+	{
+		url: "https://raw.githubusercontent.com/alexandrucancescu/vlc-client-test-files/master/video2.mkv",
+		type: "video"
 	}
 ]
 

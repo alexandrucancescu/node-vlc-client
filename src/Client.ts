@@ -66,15 +66,22 @@ export default class Client{
 		})
 	}
 
+	/**
+	 * Play a file by specifing URI. Adds a
+     * file to the playlist and plays it imediately.
+	 * Only one of the noaudio/novideo options can
+	 * be set.
+	 * @param options.wait Wait for vlc to open the file
+	 * @param options.timeout Time to wait for vlc to open the file
+	 */
 	public async playFile(uri: string, options?: PlayFileOptions){
 		const params: any = {
 			input: uri
 		}
 		if(options?.noaudio){
-			params.noaudio = options.noaudio;
-		}
-		if(options?.novideo){
-			params.novideo = options.novideo;
+			params.option = "noaudio";
+		}else if(options?.novideo){
+			params.option = "novideo";
 		}
 		await this.sendCommand("in_play",params);
 		if(options?.wait){
@@ -117,7 +124,7 @@ export default class Client{
 	 * @param increaseBy: int
 	 */
 	public async increaseVolume(increaseBy: number){
-		await this.sendCommand("seek",{
+		await this.sendCommand("volume",{
 			val: `+${Math.floor(increaseBy*5.12)}`
 		});
 	}
@@ -127,7 +134,7 @@ export default class Client{
 	 * @param decreaseBy: int
 	 */
 	public async decreaseVolume(decreaseBy: number){
-		await this.sendCommand("seek",{
+		await this.sendCommand("volume",{
 			val: `-${Math.floor(decreaseBy*5.12)}`
 		});
 	}
@@ -198,7 +205,7 @@ export default class Client{
 	 * Get the volume in a 0-100 range
 	 */
 	public async getVolume():Promise<number>{
-		return ((await this.status()).volume/512)*100;
+		return Math.floor(((await this.status()).volume/512)*100);
 	}
 
 	/**
