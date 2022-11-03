@@ -1,2 +1,3 @@
 import Client from "./Client";
-export { Client, };
+import VlcClientError from "./VlcClientError";
+export { Client, VlcClientError };

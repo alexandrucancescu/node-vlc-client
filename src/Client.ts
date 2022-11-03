@@ -88,7 +88,7 @@ export default class Client{
 			const startTime = Date.now();
 			const timeout = options?.timeout ?? 3000;
 			const fileName = basename(uri);
-			return new Promise(res=>{
+			return new Promise<void>(res=>{
 				let interval = setInterval(async ()=>{
 					if(Date.now() - startTime > timeout){
 						clearInterval(interval);

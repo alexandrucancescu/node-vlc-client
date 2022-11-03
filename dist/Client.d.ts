@@ -20,7 +20,7 @@ export default class Client {
      * @param options.wait Wait for vlc to open the file
      * @param options.timeout Time to wait for vlc to open the file
      */
-    playFile(uri: string, options?: PlayFileOptions): Promise<unknown>;
+    playFile(uri: string, options?: PlayFileOptions): Promise<void>;
     jumpForward(seconds: number): Promise<void>;
     jumpBackwards(seconds: number): Promise<void>;
     toggleFullscreen(): Promise<void>;

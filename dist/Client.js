@@ -96,7 +96,7 @@ class Client {
             if (options === null || options === void 0 ? void 0 : options.wait) {
                 const startTime = Date.now();
                 const timeout = (_a = options === null || options === void 0 ? void 0 : options.timeout) !== null && _a !== void 0 ? _a : 3000;
-                const fileName = path_1.basename(uri);
+                const fileName = (0, path_1.basename)(uri);
                 return new Promise(res => {
                     let interval = setInterval(() => __awaiter(this, void 0, void 0, function* () {
                         if (Date.now() - startTime > timeout) {
@@ -535,7 +535,7 @@ class Client {
             let url = `http://${this.options.ip}:${this.options.port}${urlPath}`;
             if (query) {
                 headers["Content-Type"] = "application/x-www-form-urlencoded";
-                url += `?${querystring_1.stringify(query)}`;
+                url += `?${(0, querystring_1.stringify)(query)}`;
             }
             this.log(url);
             const response = yield phin({
@@ -573,7 +573,7 @@ class Client {
             name: pe.name,
             duration: pe.duration,
             isCurrent: (pe.current === "current"),
-            uri: querystring_1.unescape(pe.uri),
+            uri: (0, querystring_1.unescape)(pe.uri),
         }));
     }
     static validateOptions(options) {

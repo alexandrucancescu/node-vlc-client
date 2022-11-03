@@ -24,7 +24,7 @@ before(async ()=>{
 });
 
 after(async ()=>{
-	// await removeTestFiles();
+	await removeTestFiles();
 	if(!isCi){
 		vlcProcess.kill();
 	}
