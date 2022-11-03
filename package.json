@@ -41,6 +41,6 @@
     "typescript": "^3.9.7"
   },
   "dependencies": {
-    "phin": "^3.5.0"
+    "phin": "^3.6.1"
   }
 }
