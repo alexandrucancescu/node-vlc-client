@@ -6,7 +6,7 @@ import {
 	PlaylistEntry,
 	SubtitleTrack, Track,
 	Tracks,
-	VideoTrack, VlcMeta,
+	VideoTrack, VlcFile, VlcMeta,
 	VlcStatus,
 } from "./Types";
 import * as phin from "phin"
@@ -17,7 +17,7 @@ import {basename} from "path"
 export default class Client{
 	private readonly options: ClientOptions;
 
-	public constructor(options:ClientOptions) {
+	public constructor(options: ClientOptions) {
 		this.options = Client.validateOptions(options);
 	}
 
@@ -64,6 +64,10 @@ export default class Client{
 		await this.sendCommand("in_enqueue",{
 			input: uri,
 		})
+	}
+
+	public async browse(dir: string = "/"): Promise<VlcFile[]> {
+		return this.requestBrowse(dir);
 	}
 
 	/**
@@ -452,6 +456,18 @@ export default class Client{
 		return Client.parsePlaylistEntries(response.body as unknown as Buffer);
 	}
 
+	private async requestBrowse(dir: string): Promise<VlcFile[]> {
+		const response = await this.request("/requests/browse.json", {dir});
+
+		const browseResult = JSON.parse(response.body.toString());
+
+		if(Array.isArray(browseResult?.element)){
+			return browseResult.element;
+		}else{
+			//todo throw error
+		}
+	}
+
 	private async requestAlbumArt(playlistEntryId: number):Promise<AlbumArtResult> {
 		let query;
 		if(playlistEntryId){
@@ -464,7 +480,7 @@ export default class Client{
 
 		return {
 			contentType: (response.headers["Content-Type"] || response.headers["content-type"]) as string,
-			buffer: response.body as unknown as Buffer
+			buffer: response.body
 		};
 	}
 
@@ -489,6 +505,8 @@ export default class Client{
 			method: "GET",
 			headers,
 		});
+
+		this.log(response.body.toString());
 
 		if(response.complete && response.statusCode === 200){
 			return response;

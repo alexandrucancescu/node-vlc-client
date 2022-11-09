@@ -96,3 +96,16 @@ export interface PlayFileOptions {
     wait?: boolean;
     timeout?: number;
 }
+export interface VlcFile {
+    type: "file" | "dir";
+    path: string;
+    name: string;
+    access_time: number;
+    uid: number;
+    creation_time: number;
+    gid: number;
+    modification_time: number;
+    mode: number;
+    uri: string;
+    size: number;
+}

@@ -72,6 +72,11 @@ class Client {
             });
         });
     }
+    browse(dir = "/") {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.requestBrowse(dir);
+        });
+    }
     /**
      * Play a file by specifing URI. Adds a
      * file to the playlist and plays it imediately.
@@ -511,6 +516,18 @@ class Client {
             return Client.parsePlaylistEntries(response.body);
         });
     }
+    requestBrowse(dir) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield this.request("/requests/browse.json", { dir });
+            const browseResult = JSON.parse(response.body.toString());
+            if (Array.isArray(browseResult === null || browseResult === void 0 ? void 0 : browseResult.element)) {
+                return browseResult.element;
+            }
+            else {
+                //todo throw error
+            }
+        });
+    }
     requestAlbumArt(playlistEntryId) {
         return __awaiter(this, void 0, void 0, function* () {
             let query;
@@ -543,6 +560,7 @@ class Client {
                 method: "GET",
                 headers,
             });
+            this.log(response.body.toString());
             if (response.complete && response.statusCode === 200) {
                 return response;
             }

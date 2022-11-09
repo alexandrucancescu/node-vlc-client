@@ -1,4 +1,4 @@
-import { AlbumArtResult, AspectRatio, AudioTrack, ClientOptions, PlayFileOptions, PlaylistEntry, SubtitleTrack, Tracks, VideoTrack, VlcMeta, VlcStatus } from "./Types";
+import { AlbumArtResult, AspectRatio, AudioTrack, ClientOptions, PlayFileOptions, PlaylistEntry, SubtitleTrack, Tracks, VideoTrack, VlcFile, VlcMeta, VlcStatus } from "./Types";
 export default class Client {
     private readonly options;
     constructor(options: ClientOptions);
@@ -12,6 +12,7 @@ export default class Client {
     removeFromPlaylist(id: number): Promise<void>;
     playFromPlaylist(entryId: number): Promise<void>;
     addToPlaylist(uri: string): Promise<void>;
+    browse(dir?: string): Promise<VlcFile[]>;
     /**
      * Play a file by specifing URI. Adds a
      * file to the playlist and plays it imediately.
@@ -143,6 +144,7 @@ export default class Client {
     private sendCommand;
     private requestStatus;
     private requestPlaylist;
+    private requestBrowse;
     private requestAlbumArt;
     private request;
     private log;
