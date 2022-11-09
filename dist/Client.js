@@ -13,6 +13,8 @@ const Types_1 = require("./Types");
 const phin = require("phin");
 const querystring_1 = require("querystring");
 const path_1 = require("path");
+const VlcClientError_1 = require("./VlcClientError");
+const path_2 = require("path");
 class Client {
     constructor(options) {
         this.options = Client.validateOptions(options);
@@ -522,14 +524,17 @@ class Client {
         });
     }
     requestBrowse(dir) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const response = yield this.request("/requests/browse.json", { dir });
             const browseResult = JSON.parse(response.body.toString());
             if (Array.isArray(browseResult === null || browseResult === void 0 ? void 0 : browseResult.element)) {
-                return browseResult.element;
+                let files = browseResult.element.filter(e => e.name && e.name !== "..");
+                files.forEach(e => e.path = (0, path_2.normalize)(e.path));
+                return files;
             }
             else {
-                //todo throw error
+                throw new VlcClientError_1.default(`Unexpected response: ${(_a = response.body) === null || _a === void 0 ? void 0 : _a.toString()}`);
             }
         });
     }

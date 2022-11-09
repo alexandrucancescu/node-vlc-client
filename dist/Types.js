@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AspectRatio = void 0;
+exports.VlcFileType = exports.AspectRatio = void 0;
 var AspectRatio;
 (function (AspectRatio) {
     AspectRatio["_1_1"] = "1:1";
@@ -12,4 +12,9 @@ var AspectRatio;
     AspectRatio["_235_100"] = "235:100";
     AspectRatio["_239_100"] = "239:100";
 })(AspectRatio = exports.AspectRatio || (exports.AspectRatio = {}));
+var VlcFileType;
+(function (VlcFileType) {
+    VlcFileType["FILE"] = "file";
+    VlcFileType["DIR"] = "dir";
+})(VlcFileType = exports.VlcFileType || (exports.VlcFileType = {}));
 //# sourceMappingURL=Types.js.map

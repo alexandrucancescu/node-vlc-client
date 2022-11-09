@@ -1,7 +1,7 @@
 import {
 	AlbumArtResult,
 	AspectRatio,
-	AudioTrack,
+	AudioTrack, BrowseResponse,
 	ClientOptions, PlayFileOptions,
 	PlaylistEntry,
 	SubtitleTrack, Track,
@@ -12,6 +12,8 @@ import {
 import * as phin from "phin"
 import {stringify as encodeQuery, unescape} from "querystring"
 import {basename} from "path"
+import VlcClientError from "./VlcClientError";
+import {normalize} from "path";
 
 
 export default class Client{
@@ -464,12 +466,14 @@ export default class Client{
 	private async requestBrowse(dir: string): Promise<VlcFile[]> {
 		const response = await this.request("/requests/browse.json", {dir});
 
-		const browseResult = JSON.parse(response.body.toString());
+		const browseResult = <BrowseResponse> JSON.parse(response.body.toString());
 
 		if(Array.isArray(browseResult?.element)){
-			return browseResult.element;
+			let files = browseResult.element.filter(e=> e.name && e.name !== "..");
+			files.forEach(e => e.path = normalize(e.path));
+			return files;
 		}else{
-			//todo throw error
+			throw new VlcClientError(`Unexpected response: ${response.body?.toString()}`);
 		}
 	}
 

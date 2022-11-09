@@ -112,8 +112,13 @@ export interface PlayFileOptions {
 	timeout?: number;
 }
 
+export enum VlcFileType {
+	FILE = "file",
+	DIR = "dir"
+}
+
 export interface VlcFile {
-	type: "file" | "dir",
+	type: VlcFileType,
 	path: string,
 	name: string,
 	access_time: number,
@@ -124,4 +129,8 @@ export interface VlcFile {
 	mode: number,
 	uri: string,
 	size: number;
+}
+
+export interface BrowseResponse {
+	element: VlcFile[];
 }

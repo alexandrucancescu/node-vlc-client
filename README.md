@@ -391,8 +391,13 @@ interface VlcMeta{
 
 ### VlcFile
 ```typescript
+export enum VlcFileType {
+	FILE = "file",
+	DIR = "dir"
+}
+
 export interface VlcFile {
-	type: "file" | "dir",
+	type: VlcFileType,
 	path: string,
 	name: string,
 	access_time: number,
