@@ -24,7 +24,12 @@
     "vlc-client",
     "vlc-http",
     "vlc-lue",
-    "vlc-client"
+    "vlc-client",
+    "vlc-remote",
+    "vlc-control",
+    "remote-vlc",
+    "vlc-http",
+    "http-vlc"
   ],
   "devDependencies": {
     "@types/chai": "^4.2.12",
