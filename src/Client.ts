@@ -507,7 +507,7 @@ export default class Client{
 			url += `?${encodeQuery(query)}`;
 		}
 
-		this.log(url);
+		// this.log(url);
 
 		const response = await phin({
 			url,
@@ -515,7 +515,7 @@ export default class Client{
 			headers,
 		});
 
-		this.log(response.body.toString());
+		// this.log(response.body.toString());
 
 		if(response.complete && response.statusCode === 200){
 			return response;

@@ -1,6 +1,6 @@
 import {expect} from "chai"
-import {after, before, describe} from "mocha"
-import {downloadTestFiles, removeTestFiles, spawnVlc, TestFiles} from "./Spawner";
+import {after, before, describe, MochaGlobals} from "mocha"
+import {downloadTestFiles, removeTestFiles, spawnVlc, TestFiles, TEST_FILES_DIR} from "./Spawner";
 import {ChildProcess} from "child_process";
 import {Client} from "../src";
 import * as isCi from "is-ci";
@@ -10,7 +10,10 @@ let vlcProcess: ChildProcess;
 let vlc: Client;
 let testFiles : TestFiles;
 
-before(async ()=>{
+
+before(async function () {
+	this.timeout(20000);
+
 	testFiles = await downloadTestFiles();
 	if(!isCi){
 		vlcProcess =await spawnVlc();
@@ -223,7 +226,7 @@ describe("CORE FUNCTIONALITIES",()=>{
 		expect(await vlc.getFileName()).to.equal(testFiles.video[1].name);
 	});
 
-	it("should get tracks", async ()=>{
+	it("should get tracks", async () => {
 		const tracks = await vlc.getTracks();
 
 		expect(tracks).to.have.keys("video", "audio", "subtitle");
@@ -235,6 +238,15 @@ describe("CORE FUNCTIONALITIES",()=>{
 		expect(await vlc.getVideoTracks()).to.have.length(1);
 		expect(await vlc.getAudioTracks()).to.have.length(1);
 		expect(await vlc.getSubtitleTracks()).to.have.length(1);
+	});
+
+	it("should browse files", async () => {
+		const files = await vlc.browse(TEST_FILES_DIR);
+
+		expect(files).to.have.length(3);
+		expect(files.find(e => e.name === "..")).to.be.undefined;
+
+		expect(files.find(e => e.name === "video2.mkv")).not.to.be.undefined;
 	});
 });
 

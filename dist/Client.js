@@ -564,13 +564,13 @@ class Client {
                 headers["Content-Type"] = "application/x-www-form-urlencoded";
                 url += `?${(0, querystring_1.stringify)(query)}`;
             }
-            this.log(url);
+            // this.log(url);
             const response = yield phin({
                 url,
                 method: "GET",
                 headers,
             });
-            this.log(response.body.toString());
+            // this.log(response.body.toString());
             if (response.complete && response.statusCode === 200) {
                 return response;
             }

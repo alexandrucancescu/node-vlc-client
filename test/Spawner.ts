@@ -35,16 +35,14 @@ export async function spawnVlc(): Promise<ChildProcess> {
 		stdio: "pipe"
 	});
 
-	if(isCi||true){
-		const output = createWriteStream(path.join(__dirname,"../vlc.log"));
-		vlcProcess.stderr.pipe(output);
-		vlcProcess.stdout.pipe(output);
-		vlcProcess.on("exit",()=>{
-			output.close();
-		})
+	const output = createWriteStream(path.join(__dirname,"../vlc.log"));
+	vlcProcess.stderr.pipe(output);
+	vlcProcess.stdout.pipe(output);
+	vlcProcess.on("exit",()=>{
+		output.close();
+	})
 
-		console.log([vlcProcess.spawnfile,...vlcProcess.spawnargs].join(" "));
-	}
+	console.log([vlcProcess.spawnfile, ...vlcProcess.spawnargs].join(" "));
 
 	return new Promise<ChildProcess>((res,rej)=>{
 		const listener = (isError: boolean,error: Error)=>{
@@ -83,7 +81,7 @@ const TEST_FILES_URLS = [
 	}
 ]
 
-const TEST_FILES_DIR = path.join(__dirname, "../test-files");
+export const TEST_FILES_DIR = path.join(__dirname, "../test-files");
 
 export type TestFiles = {
 	audio: { path: string, name :string } [],
