@@ -67,8 +67,8 @@ export default class Client{
 	}
 
 	/**
-	 * Browse the computer with the VLC instance
-	 * for files
+	 * Browse the remote computer running the VLC instance
+	 * for files in a given directory
 	 * @param dir The directory to browse
 	 */
 	public async browse(dir: string = "/"): Promise<VlcFile[]> {
