@@ -12,6 +12,11 @@ export default class Client {
     removeFromPlaylist(id: number): Promise<void>;
     playFromPlaylist(entryId: number): Promise<void>;
     addToPlaylist(uri: string): Promise<void>;
+    /**
+     * Browse the computer with the VLC instance
+     * for files
+     * @param dir The directory to browse
+     */
     browse(dir?: string): Promise<VlcFile[]>;
     /**
      * Play a file by specifing URI. Adds a

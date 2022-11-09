@@ -19,7 +19,7 @@ of VLC's functions that can be controlled with the HTTP interface
 - [x] Add/Change video, audio, subs streams
 - [x] Request album art
 - [x] Lots of helper methods
-- [ ] Browse for files
+- [x] Browse for files
 - [ ] Auto polling for changes
 - [ ] Audio eq, effects
 - [ ] VLC instances discovery on the network
@@ -152,6 +152,11 @@ Increase the volume by given int, range 0-100
 
 ### .decreaseVolume()
 Decrease the volume by given int, range 0-100
+
+### .browse(dir: string) => [VlcFile](#vlcfile)
+Browse the remote computer running the VLC instance
+for files in a given directory.  
+Default dir: /
 
 ## Getters
 
@@ -381,6 +386,23 @@ interface VlcMeta{
 	filename:string,
     [key: string]: string,
     ... // much more properties
+}
+```
+
+### VlcFile
+```typescript
+export interface VlcFile {
+	type: "file" | "dir",
+	path: string,
+	name: string,
+	access_time: number,
+	uid: number,
+	creation_time: number,
+	gid: number,
+	modification_time: number,
+	mode: number,
+	uri: string,
+	size: number;
 }
 ```
 

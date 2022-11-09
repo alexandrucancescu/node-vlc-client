@@ -66,6 +66,11 @@ export default class Client{
 		})
 	}
 
+	/**
+	 * Browse the computer with the VLC instance
+	 * for files
+	 * @param dir The directory to browse
+	 */
 	public async browse(dir: string = "/"): Promise<VlcFile[]> {
 		return this.requestBrowse(dir);
 	}

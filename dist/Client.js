@@ -72,6 +72,11 @@ class Client {
             });
         });
     }
+    /**
+     * Browse the computer with the VLC instance
+     * for files
+     * @param dir The directory to browse
+     */
     browse(dir = "/") {
         return __awaiter(this, void 0, void 0, function* () {
             return this.requestBrowse(dir);
